@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ff6b35">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MathUp">
+<meta name="description" content="Matematica 2ª Media – DSA Friendly – by Valerio Spiga">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>MathUp – Matematica DSA</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fef9f0;
+  --card: #ffffff;
+  --primary: #ff6b35;
+  --primary-light: #fff0eb;
+  --primary-dark: #e55527;
+  --accent: #4ecdc4;
+  --accent-light: #e8faf9;
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --green: #22c55e;
+  --green-light: #f0fdf4;
+  --yellow: #f59e0b;
+  --yellow-light: #fffbeb;
+  --blue: #3b82f6;
+  --blue-light: #eff6ff;
+  --red: #ef4444;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --radius: 20px;
+  --font: 'Nunito', sans-serif;
+  --font-body: 'Nunito Sans', sans-serif;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  font-size:17px;
+  line-height:1.7;
+  overscroll-behavior:none;
+}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;
+  background:linear-gradient(135deg,#ff6b35 0%,#ff8c42 60%,#ffa05c 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:1000;transition:opacity 0.5s;
+}
+#splash .splash-logo{font-family:var(--font);font-weight:900;font-size:52px;color:white;letter-spacing:-1px}
+#splash .splash-logo span{color:rgba(255,255,255,0.6)}
+#splash p{color:rgba(255,255,255,0.85);font-family:var(--font);font-weight:600;font-size:16px;margin-top:10px}
+#splash .dot-loader{display:flex;gap:8px;margin-top:30px}
+#splash .dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.7);animation:bounce 0.8s infinite alternate}
+#splash .dot:nth-child(2){animation-delay:0.2s}
+#splash .dot:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{to{transform:translateY(-10px);opacity:1}from{opacity:0.4}}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,var(--primary) 0%,#ff8c42 100%);
+  padding:14px 20px 14px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;gap:12px;
+  box-shadow:0 4px 20px rgba(255,107,53,0.3);
+  position:sticky;top:0;z-index:50;
+}
+.logo{font-family:var(--font);font-weight:900;font-size:24px;color:white;letter-spacing:-0.5px;text-decoration:none}
+.logo span{color:rgba(255,255,255,0.55)}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.pts-badge{
+  background:rgba(255,255,255,0.2);color:white;
+  font-family:var(--font);font-weight:800;font-size:14px;
+  padding:6px 14px;border-radius:50px;
+  border:2px solid rgba(255,255,255,0.3);
+  backdrop-filter:blur(4px);
+}
+.settings-btn{
+  background:rgba(255,255,255,0.2);border:none;
+  color:white;font-size:18px;width:36px;height:36px;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:white;
+  padding:8px 4px calc(8px + var(--safe-bottom));
+  display:flex;justify-content:space-around;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.08);
+  z-index:50;border-top:1px solid var(--border);
+}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:6px 10px;border-radius:14px;
+  transition:all 0.2s;flex:1;max-width:72px;border:none;background:none;
+}
+.nav-item .ni{font-size:20px;transition:transform 0.2s}
+.nav-item .nl{font-family:var(--font);font-weight:700;font-size:10px;color:var(--text-light);line-height:1.2;text-align:center}
+.nav-item.active{background:var(--primary-light)}
+.nav-item.active .ni{transform:scale(1.2)}
+.nav-item.active .nl{color:var(--primary)}
+
+/* ── MAIN ── */
+main{padding:20px 16px calc(100px + var(--safe-bottom));max-width:680px;margin:0 auto}
+
+/* ── CARDS ── */
+.card{
+  background:var(--card);border-radius:var(--radius);
+  padding:24px;margin-bottom:20px;
+  box-shadow:var(--shadow);
+}
+.card h2{
+  font-family:var(--font);font-weight:900;font-size:20px;
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.card p{font-size:16px;line-height:1.8;margin-bottom:12px}
+.card p:last-child{margin-bottom:0}
+
+/* ── VISUAL BLOCKS ── */
+.vb{
+  border-radius:14px;padding:20px;margin:18px 0;
+  border-left:5px solid;
+}
+.vb-orange{background:var(--primary-light);border-color:var(--primary)}
+.vb-teal{background:var(--accent-light);border-color:var(--accent)}
+.vb-purple{background:var(--purple-light);border-color:var(--purple)}
+.vb-green{background:var(--green-light);border-color:var(--green)}
+.vb-yellow{background:var(--yellow-light);border-color:var(--yellow)}
+.vb-blue{background:var(--blue-light);border-color:var(--blue)}
+.vb h3{font-family:var(--font);font-weight:800;font-size:16px;margin-bottom:10px}
+
+/* ── FORMULA BOX ── */
+.formula{
+  font-family:var(--font);font-weight:900;font-size:22px;
+  text-align:center;padding:16px 24px;border-radius:50px;
+  margin:12px auto;display:inline-block;letter-spacing:0.5px;
+}
+.formula-orange{background:var(--primary);color:white}
+.formula-purple{background:var(--purple);color:white}
+.formula-blue{background:var(--blue);color:white}
+.formula-green{background:var(--green);color:white}
+
+/* ── SLIDERS ── */
+.slider-row{margin:12px 0}
+.slider-row label{font-family:var(--font);font-weight:700;font-size:14px;color:var(--text-light);display:block;margin-bottom:6px}
+input[type=range]{
+  width:100%;height:8px;-webkit-appearance:none;
+  background:#e2e8f0;border-radius:4px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+  background:var(--primary);border:3px solid white;
+  box-shadow:0 2px 8px rgba(255,107,53,0.35);cursor:pointer;
+}
+
+/* ── CANVAS ── */
+canvas{
+  border-radius:14px;background:white;
+  border:2px solid var(--border);max-width:100%;display:block;
+}
+
+/* ── STEP PILLS ── */
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pill{
+  padding:7px 16px;border-radius:50px;
+  font-family:var(--font);font-weight:700;font-size:13px;
+  background:#f1f5f9;color:var(--text-light);
+  cursor:pointer;border:2px solid transparent;transition:all 0.2s;
+}
+.pill.active{background:var(--primary);color:white;border-color:var(--primary)}
+.pill:hover:not(.active){border-color:var(--primary);color:var(--primary)}
+
+/* ── NUMBER LINE ── */
+.nl-scroll{overflow-x:auto;padding:16px 0}
+.nl-track{
+  display:flex;align-items:center;
+  min-width:540px;position:relative;padding:0 10px;
+}
+.nl-axis{position:absolute;top:50%;left:10px;right:10px;height:3px;background:var(--text);transform:translateY(-50%)}
+.nl-item{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;position:relative;z-index:2;cursor:pointer;
+}
+.nl-dot{
+  width:38px;height:38px;border-radius:50%;background:white;
+  border:3px solid var(--text);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font);font-weight:800;font-size:14px;
+  transition:all 0.2s;margin-bottom:6px;
+}
+.nl-item.neg .nl-dot{border-color:var(--red);color:var(--red)}
+.nl-item.zero .nl-dot{border-color:var(--text);background:var(--text);color:white;width:44px;height:44px}
+.nl-item.pos .nl-dot{border-color:var(--green);color:var(--green)}
+.nl-item:hover .nl-dot{transform:scale(1.25);box-shadow:0 0 0 5px rgba(0,0,0,0.08)}
+.nl-lbl{font-size:10px;font-family:var(--font);font-weight:700;color:var(--text-light)}
+
+/* ── FRACTION VIS ── */
+.frac-parts{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0}
+.fp{
+  width:46px;height:46px;border-radius:10px;
+  border:2px solid var(--border);background:#f8fafc;
+  transition:all 0.3s;cursor:default;
+}
+.fp.on{background:var(--primary);border-color:var(--primary)}
+
+/* ── EXERCISE ZONE ── */
+.ex-zone{
+  background:linear-gradient(135deg,#f8fafc,#f0f4ff);
+  border-radius:var(--radius);padding:24px;
+  margin-top:4px;border:2px solid var(--border);
+}
+.ex-zone h3{
+  font-family:var(--font);font-weight:900;font-size:17px;
+  color:var(--purple);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.q-card{background:white;border-radius:16px;padding:22px;box-shadow:0 2px 12px rgba(0,0,0,0.05)}
+.q-num{
+  font-family:var(--font);font-weight:800;font-size:11px;
+  color:white;background:var(--purple);padding:3px 10px;
+  border-radius:50px;display:inline-block;margin-bottom:12px;
+  letter-spacing:0.5px;
+}
+.q-text{
+  font-family:var(--font);font-weight:700;font-size:18px;
+  color:var(--text);margin-bottom:20px;line-height:1.5;
+}
+/* Visual question support */
+.q-visual{
+  background:var(--blue-light);border-radius:12px;padding:14px;
+  margin-bottom:16px;font-family:var(--font);font-weight:700;
+  font-size:15px;color:var(--blue);line-height:1.7;
+  border-left:4px solid var(--blue);
+}
+.opts{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+}
+.opts.four-opts{grid-template-columns:repeat(2,1fr)}
+.opt-btn{
+  padding:18px 10px;border-radius:14px;border:3px solid var(--border);
+  background:white;cursor:pointer;
+  font-family:var(--font);font-weight:800;font-size:18px;
+  color:var(--text);transition:all 0.2s;text-align:center;line-height:1.3;
+  -webkit-user-select:none;user-select:none;
+}
+.opt-btn:active{transform:scale(0.96)}
+.opt-btn:hover:not(.locked){border-color:var(--primary);background:var(--primary-light);transform:scale(1.03)}
+.opt-btn.correct{background:var(--green-light)!important;border-color:var(--green)!important;color:var(--green)!important;animation:pop 0.35s ease}
+.opt-btn.wrong{background:#fef2f2!important;border-color:var(--red)!important;color:var(--red)!important;animation:shake 0.35s ease}
+.opt-btn.locked{cursor:default}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-8px)}60%{transform:translateX(8px)}100%{transform:translateX(0)}}
+
+.feedback{
+  margin-top:14px;padding:14px 18px;border-radius:12px;
+  font-family:var(--font);font-weight:800;font-size:15px;
+  display:none;align-items:flex-start;gap:10px;line-height:1.5;
+}
+.feedback.show{display:flex}
+.feedback.ok{background:var(--green-light);color:#15803d}
+.feedback.ko{background:#fef2f2;color:#b91c1c}
+
+/* ── HINT ── */
+.hint-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:2px solid var(--yellow);
+  border-radius:50px;padding:7px 16px;
+  cursor:pointer;font-family:var(--font);font-weight:700;
+  font-size:13px;color:#92400e;margin-top:14px;
+  transition:all 0.2s;
+}
+.hint-btn:hover{background:var(--yellow-light)}
+.hint-box{
+  display:none;margin-top:10px;padding:14px 16px;
+  background:var(--yellow-light);border:2px dashed var(--yellow);
+  border-radius:12px;font-family:var(--font);font-weight:600;
+  font-size:14px;color:#92400e;line-height:1.6;
+}
+.hint-box.show{display:block}
+
+/* ── NEXT BTN ── */
+.next-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--primary),#ff8c42);
+  color:white;border:none;border-radius:50px;
+  padding:14px 28px;font-family:var(--font);font-weight:800;
+  font-size:16px;cursor:pointer;margin-top:18px;
+  box-shadow:0 4px 16px rgba(255,107,53,0.35);
+  transition:all 0.2s;
+}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,107,53,0.5)}
+
+/* ── PROGRESS ── */
+.q-progress{
+  display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;
+}
+.q-dot{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--border);font-family:var(--font);
+  font-weight:800;font-size:11px;display:flex;align-items:center;
+  justify-content:center;color:white;transition:all 0.3s;
+}
+.q-dot.done-ok{background:var(--green)}
+.q-dot.done-ko{background:var(--red)}
+.q-dot.current{background:var(--primary);transform:scale(1.15)}
+
+/* ── TOOLS FLOATING ── */
+.tools-row{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:12px 16px;background:var(--card);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:58px;z-index:40;
+  overflow-x:auto;
+  padding-top:calc(12px + env(safe-area-inset-top,0px) * 0);
+}
+.tool-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 14px;border-radius:50px;
+  background:var(--accent-light);border:2px solid var(--accent);
+  font-family:var(--font);font-weight:700;font-size:13px;
+  color:#0f766e;cursor:pointer;white-space:nowrap;
+  transition:all 0.2s;flex-shrink:0;
+}
+.tool-chip:hover{background:var(--accent);color:white;transform:scale(1.04)}
+
+/* ── MODAL ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.55);
+  z-index:200;display:none;align-items:flex-end;justify-content:center;
+  padding:0;backdrop-filter:blur(6px);
+}
+.overlay.show{display:flex}
+.modal{
+  background:white;border-radius:28px 28px 0 0;
+  padding:28px 24px calc(24px + var(--safe-bottom));
+  width:100%;max-width:560px;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.18);
+  animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  max-height:88vh;overflow-y:auto;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px}
+.modal h3{font-family:var(--font);font-weight:900;font-size:20px;margin-bottom:18px}
+.modal-close{
+  width:100%;margin-top:20px;padding:14px;
+  background:var(--primary);color:white;border:none;border-radius:14px;
+  font-family:var(--font);font-weight:800;font-size:16px;cursor:pointer;
+  transition:all 0.2s;
+}
+.modal-close:hover{background:var(--primary-dark)}
+
+/* ── CALCULATOR ── */
+.calc{background:#1e293b;border-radius:20px;padding:18px;max-width:300px;margin:0 auto}
+.calc-disp{
+  background:#0f172a;border-radius:12px;padding:14px 18px;
+  text-align:right;font-family:var(--font);font-weight:800;
+  font-size:30px;color:#f8fafc;margin-bottom:14px;min-height:58px;
+  word-break:break-all;
+}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cb{
+  padding:16px 8px;border-radius:12px;border:none;
+  font-family:var(--font);font-weight:800;font-size:18px;
+  cursor:pointer;transition:all 0.15s;background:#334155;color:#f8fafc;
+}
+.cb:active{transform:scale(0.93)}
+.cb.op{background:var(--primary);color:white}
+.cb.eq{background:var(--accent);color:white;grid-column:span 2}
+.cb.clr{background:var(--red);color:white}
+.cb.z{grid-column:span 2}
+
+/* ── PITA TABLE ── */
+.pt{border-collapse:collapse;width:100%;font-family:var(--font);font-weight:700;font-size:13px;border-radius:12px;overflow:hidden}
+.pt th{background:var(--purple);color:white;padding:8px 5px;text-align:center}
+.pt td{padding:7px 4px;text-align:center;border:1px solid #f1f5f9;cursor:pointer;transition:background 0.15s}
+.pt td:hover{background:var(--purple-light)}
+.pt tr:nth-child(even) td{background:#fafafa}
+.pt tr:nth-child(even) td:hover{background:var(--purple-light)}
+.pt td.diag{background:var(--purple-light);color:var(--purple);font-weight:900}
+
+/* ── FORMULE SHEET ── */
+.form-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+  font-family:var(--font);
+}
+.form-row:last-child{border-bottom:none}
+.form-icon{font-size:26px;flex-shrink:0;width:36px;text-align:center}
+.form-content .name{font-weight:800;font-size:14px;color:var(--text-light)}
+.form-content .f{font-weight:800;font-size:16px;color:var(--text);margin-top:2px}
+.form-content .inv{font-size:13px;color:var(--purple);font-weight:700;margin-top:2px}
+
+/* ── STATS PAGE ── */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+.stat-box{
+  background:white;border-radius:16px;padding:18px;
+  box-shadow:var(--shadow);text-align:center;
+}
+.stat-box .sv{font-family:var(--font);font-weight:900;font-size:34px}
+.stat-box .sl{font-family:var(--font);font-weight:700;font-size:12px;color:var(--text-light);margin-top:4px}
+.stars-row{display:flex;gap:4px;justify-content:center;font-size:26px;margin:6px 0}
+
+/* ── ACCESS BAR ── */
+.access-bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.ac-btn{
+  padding:8px 16px;border-radius:50px;border:2px solid var(--border);
+  background:white;cursor:pointer;font-family:var(--font);font-weight:700;
+  font-size:13px;color:var(--text-light);transition:all 0.2s;
+  display:flex;align-items:center;gap:5px;
+}
+.ac-btn.on{background:var(--primary);border-color:var(--primary);color:white}
+.ac-btn:hover{transform:scale(1.04)}
+
+/* ── ACCESSIBILITY MODES ── */
+body.large-text{font-size:20px}
+body.large-text .opt-btn{font-size:22px;padding:22px 10px}
+body.large-text .q-text{font-size:22px}
+body.large-text .formula{font-size:26px}
+body.high-contrast{
+  --bg:#0a0a0a;--card:#1a1a1a;--text:#ffffff;--text-light:#aaaaaa;
+  --border:#333;--primary-light:#2a1200;--accent-light:#001a18;
+  --purple-light:#180033;--green-light:#001a0d;--yellow-light:#1a1500;
+  --blue-light:#001226;
+}
+body.high-contrast .opt-btn{background:#1a1a1a!important;color:white!important}
+body.dsa-font *{letter-spacing:0.08em!important;word-spacing:0.15em!important;line-height:2.1!important}
+
+/* ── PROGRESS BAR ── */
+.prog-bar-wrap{height:6px;background:var(--border);border-radius:3px;margin-bottom:16px;overflow:hidden}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--yellow));border-radius:3px;transition:width 0.5s ease}
+
+/* ── CONTENT PAGES ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── HOME PAGE ── */
+.home-hero{
+  background:linear-gradient(135deg,var(--primary) 0%,#ff8c42 50%,#ffa05c 100%);
+  border-radius:var(--radius);padding:28px 24px;margin-bottom:20px;
+  color:white;position:relative;overflow:hidden;
+}
+.home-hero::after{
+  content:'🧠';font-size:80px;
+  position:absolute;right:-10px;bottom:-10px;opacity:0.25;
+  transform:rotate(15deg);
+}
+.home-hero h1{font-family:var(--font);font-weight:900;font-size:26px;margin-bottom:8px}
+.home-hero p{font-size:15px;opacity:0.9;line-height:1.6;max-width:300px}
+.topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.topic-card{
+  background:var(--card);border-radius:18px;padding:20px;
+  box-shadow:var(--shadow);cursor:pointer;border:3px solid transparent;
+  transition:all 0.25s;display:flex;flex-direction:column;gap:8px;
+}
+.topic-card:hover,.topic-card:active{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.topic-card .tc-icon{font-size:32px}
+.topic-card .tc-name{font-family:var(--font);font-weight:800;font-size:14px;line-height:1.3}
+.topic-card .tc-count{font-size:12px;color:var(--text-light);font-family:var(--font);font-weight:600}
+.topic-card .tc-bar{height:4px;border-radius:2px;background:var(--border);margin-top:4px}
+.topic-card .tc-fill{height:100%;border-radius:2px;transition:width 0.5s}
+
+/* ── AUTHOR ── */
+.author-tag{
+  text-align:center;padding:16px;
+  font-family:var(--font);font-size:13px;font-weight:600;
+  color:var(--text-light);
+}
+.author-tag strong{color:var(--primary)}
+
+/* ── INSTALL BANNER ── */
+#install-banner{
+  display:none;position:fixed;bottom:calc(70px + var(--safe-bottom));
+  left:16px;right:16px;
+  background:linear-gradient(135deg,var(--purple),#7c3aed);
+  color:white;border-radius:18px;padding:16px 20px;
+  box-shadow:0 8px 32px rgba(139,92,246,0.4);
+  z-index:60;animation:slideUp 0.4s ease;
+}
+#install-banner.show{display:flex;align-items:center;gap:12px}
+#install-banner p{flex:1;font-family:var(--font);font-weight:700;font-size:14px;line-height:1.4}
+.install-btn{
+  background:white;color:var(--purple);border:none;border-radius:50px;
+  padding:10px 18px;font-family:var(--font);font-weight:800;font-size:13px;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.install-x{background:none;border:none;color:rgba(255,255,255,0.6);font-size:20px;cursor:pointer;flex-shrink:0;padding:0 4px}
+
+/* ── SECTION HEADER ── */
+.sec-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:20px;
+}
+.sec-back{
+  background:none;border:2px solid var(--border);border-radius:50%;
+  width:40px;height:40px;cursor:pointer;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;color:var(--text);flex-shrink:0;
+}
+.sec-back:hover{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+.sec-header h2{font-family:var(--font);font-weight:900;font-size:22px}
+
+/* geom visual helpers */
+.geom-result{
+  font-family:var(--font);font-weight:800;font-size:20px;
+  text-align:center;margin-top:14px;padding:14px;
+  background:var(--purple-light);border-radius:12px;color:var(--purple);
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo">Math<span>Up</span> 🚀</div>
+  <p>Matematica 2ª Media – DSA Friendly</p>
+  <div class="dot-loader">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header id="mainHeader">
+  <span class="logo">Math<span>Up</span></span>
+  <div class="header-right">
+    <span class="pts-badge" id="ptsBadge">⭐ 0 pt</span>
+    <button class="settings-btn" onclick="showPage('settings')" title="Impostazioni">⚙️</button>
+  </div>
+</header>
+
+<!-- TOOLS ROW -->
+<div class="tools-row" id="toolsRow">
+  <button class="tool-chip" onclick="openModal('mCalc')">🔢 Calcolatrice</button>
+  <button class="tool-chip" onclick="openModal('mPita')">✖️ Tav. Pitagorica</button>
+  <button class="tool-chip" onclick="openModal('mForm')">📐 Formule</button>
+  <button class="tool-chip" onclick="openModal('mReg')">± Regole Segni</button>
+</div>
+
+<!-- MAIN -->
+<main id="mainContent">
+
+  <!-- ═══════════ HOME ═══════════ -->
+  <div class="page active" id="pageHome">
+    <div class="home-hero">
+      <h1>Ciao! Pronto a fare matematica? 🎯</h1>
+      <p>Scegli un argomento. Nessuno scrive a mano — si risponde sempre cliccando!</p>
+    </div>
+    <div class="topic-grid">
+      <div class="topic-card" onclick="showTopic('numeri')" style="border-color:#ef444422" id="tc-numeri">
+        <div class="tc-icon">±</div>
+        <div class="tc-name">Numeri Relativi</div>
+        <div class="tc-count" id="cnt-numeri">10 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-numeri" style="width:0%;background:#ef4444"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('frazioni')" style="border-color:#f59e0b22" id="tc-frazioni">
+        <div class="tc-icon">½</div>
+        <div class="tc-name">Frazioni</div>
+        <div class="tc-count" id="cnt-frazioni">10 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-frazioni" style="width:0%;background:#f59e0b"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('geometria')" style="border-color:#3b82f622" id="tc-geometria">
+        <div class="tc-icon">🔷</div>
+        <div class="tc-name">Geometria & Aree</div>
+        <div class="tc-count" id="cnt-geometria">15 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-geometria" style="width:0%;background:#3b82f6"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('pitagora')" style="border-color:#8b5cf622" id="tc-pitagora">
+        <div class="tc-icon">📐</div>
+        <div class="tc-name">Teorema di Pitagora</div>
+        <div class="tc-count" id="cnt-pitagora">10 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-pitagora" style="width:0%;background:#8b5cf6"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('algebra')" style="border-color:#22c55e22" id="tc-algebra">
+        <div class="tc-icon">🔤</div>
+        <div class="tc-name">Algebra</div>
+        <div class="tc-count" id="cnt-algebra">10 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-algebra" style="width:0%;background:#22c55e"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('statistica')" style="border-color:#f59e0b22" id="tc-statistica">
+        <div class="tc-icon">📊</div>
+        <div class="tc-name">Statistica</div>
+        <div class="tc-count" id="cnt-statistica">10 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-statistica" style="width:0%;background:#f59e0b"></div></div>
+      </div>
+    </div>
+    <div class="author-tag">Creato da <strong>Valerio Spiga</strong> · MathUp v1.0 · DSA Friendly 🧡</div>
+  </div>
+
+  <!-- ═══════════ TOPIC PAGE ═══════════ -->
+  <div class="page" id="pageTopicLesson">
+    <div class="sec-header">
+      <button class="sec-back" onclick="showPage('home')" aria-label="Torna alla home">←</button>
+      <h2 id="topicTitle"></h2>
+    </div>
+    <div id="lessonContent"></div>
+    <div class="ex-zone" id="exZone">
+      <h3 id="exTitle">💪 Esercitati — clicca la risposta!</h3>
+      <div class="q-progress" id="qProgress"></div>
+      <div class="prog-bar-wrap"><div class="prog-bar-fill" id="qProgBar" style="width:0%"></div></div>
+      <div id="quizArea"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ STATS ═══════════ -->
+  <div class="page" id="pageStats">
+    <div class="sec-header" style="margin-bottom:20px">
+      <h2>📊 I tuoi progressi</h2>
+    </div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="card" id="statDetail"></div>
+  </div>
+
+  <!-- ═══════════ SETTINGS ═══════════ -->
+  <div class="page" id="pageSettings">
+    <div class="sec-header" style="margin-bottom:20px">
+      <button class="sec-back" onclick="showPage('home')">←</button>
+      <h2>⚙️ Impostazioni</h2>
+    </div>
+    <div class="card">
+      <h2>♿ Accessibilità</h2>
+      <div class="access-bar">
+        <button class="ac-btn" id="btnLarge" onclick="toggleA('large-text',this)">🔤 Testo Grande</button>
+        <button class="ac-btn" id="btnContrast" onclick="toggleA('high-contrast',this)">🌙 Alto Contrasto</button>
+        <button class="ac-btn" id="btnDSA" onclick="toggleA('dsa-font',this)">📖 Font DSA</button>
+        <button class="ac-btn" id="btnSound" onclick="toggleSound(this)">🔊 Audio Attivo</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>ℹ️ Informazioni</h2>
+      <p><strong>MathUp</strong> è una webapp educativa pensata per studenti di 2ª media con discalculia e disgrafia, ispirata alle linee guida pedagogiche per i DSA (Legge 170/2010).</p>
+      <p>Principi adottati: piccoli passi progressivi, risposta per clic (nessuna scrittura), strumenti compensativi sempre visibili, feedback immediato, rinforzo positivo.</p>
+      <p style="margin-top:16px;font-family:var(--font);font-weight:800;color:var(--primary)">Autore: Valerio Spiga</p>
+      <p style="font-size:14px;color:var(--text-light)">Versione 1.0 · 2025</p>
+    </div>
+    <div class="card">
+      <h2>📲 Installazione su telefono</h2>
+      <p><strong>iPhone / iPad (Safari):</strong> tocca il pulsante Condividi ↑ → "Aggiungi alla schermata Home"</p>
+      <p><strong>Android (Chrome):</strong> tocca i tre puntini ⋮ → "Aggiungi alla schermata Home" oppure "Installa app"</p>
+    </div>
+    <div class="author-tag">Made with 🧡 by <strong>Valerio Spiga</strong></div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="showPage('home')" aria-label="Home">
+    <span class="ni">🏠</span><span class="nl">Home</span>
+  </button>
+  <button class="nav-item" id="nav-geo" onclick="showTopic('geometria')" aria-label="Geometria">
+    <span class="ni">🔷</span><span class="nl">Geometria</span>
+  </button>
+  <button class="nav-item" id="nav-stats" onclick="showPage('stats')" aria-label="Progressi">
+    <span class="ni">📊</span><span class="nl">Progressi</span>
+  </button>
+  <button class="nav-item" id="nav-set" onclick="showPage('settings')" aria-label="Impostazioni">
+    <span class="ni">⚙️</span><span class="nl">Imposta</span>
+  </button>
+</nav>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  <p>📲 Installa MathUp sul tuo telefono!</p>
+  <button class="install-btn" id="installBtn">Installa</button>
+  <button class="install-x" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+</div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+<div class="overlay" id="mCalc" onclick="if(event.target===this)closeModal('mCalc')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>🔢 Calcolatrice</h3>
+    <div class="calc">
+      <div class="calc-disp" id="calcDisp">0</div>
+      <div class="calc-grid">
+        <button class="cb clr" onclick="ci('C')">C</button>
+        <button class="cb op" onclick="ci('±')">±</button>
+        <button class="cb op" onclick="ci('%')">%</button>
+        <button class="cb op" onclick="ci('÷')">÷</button>
+        <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button>
+        <button class="cb" onclick="ci('9')">9</button><button class="cb op" onclick="ci('×')">×</button>
+        <button class="cb" onclick="ci('4')">4</button><button class="cb" onclick="ci('5')">5</button>
+        <button class="cb" onclick="ci('6')">6</button><button class="cb op" onclick="ci('−')">−</button>
+        <button class="cb" onclick="ci('1')">1</button><button class="cb" onclick="ci('2')">2</button>
+        <button class="cb" onclick="ci('3')">3</button><button class="cb op" onclick="ci('+')">+</button>
+        <button class="cb z" onclick="ci('0')">0</button>
+        <button class="cb" onclick="ci('.')">.</button>
+        <button class="cb eq" onclick="ci('=')">=</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal('mCalc')">✓ Chiudi</button>
+  </div>
+</div>
+
+<div class="overlay" id="mPita" onclick="if(event.target===this)closeModal('mPita')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>✖️ Tavola Pitagorica</h3>
+    <div style="overflow-x:auto"><table class="pt" id="pitaTable"></table></div>
+    <button class="modal-close" onclick="closeModal('mPita')">✓ Chiudi</button>
+  </div>
+</div>
+
+<div class="overlay" id="mForm" onclick="if(event.target===this)closeModal('mForm')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>📐 Formule & Inverse</h3>
+    <div id="formuleList"></div>
+    <button class="modal-close" onclick="closeModal('mForm')">✓ Chiudi</button>
+  </div>
+</div>
+
+<div class="overlay" id="mReg" onclick="if(event.target===this)closeModal('mReg')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>± Regole dei Segni</h3>
+    <div style="font-family:var(--font);font-weight:700;font-size:17px;line-height:2.6">
+      <p>➕ × ➕ = <strong style="color:var(--green)">POSITIVO</strong></p>
+      <p>➖ × ➖ = <strong style="color:var(--green)">POSITIVO</strong></p>
+      <p>➕ × ➖ = <strong style="color:var(--red)">NEGATIVO</strong></p>
+      <p>➖ × ➕ = <strong style="color:var(--red)">NEGATIVO</strong></p>
+      <hr style="margin:8px 0;opacity:0.15">
+      <p style="font-size:14px;color:var(--text-light)">Segni <strong>uguali</strong> → risultato <strong style="color:var(--green)">+</strong></p>
+      <p style="font-size:14px;color:var(--text-light)">Segni <strong>diversi</strong> → risultato <strong style="color:var(--red)">−</strong></p>
+    </div>
+    <button class="modal-close" onclick="closeModal('mReg')">✓ Chiudi</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════════
+const state = {
+  points: 0,
+  sound: false,
+  topic: null,
+  quizIdx: 0,
+  quizAnswered: false,
+  progress: { numeri:{done:0,correct:0}, frazioni:{done:0,correct:0}, geometria:{done:0,correct:0}, pitagora:{done:0,correct:0}, algebra:{done:0,correct:0}, statistica:{done:0,correct:0} }
+};
+let installPrompt = null;
+
+// ═══════════════════════════════════════════
+// QUIZ DATA
+// ═══════════════════════════════════════════
+const QUIZZES = {
+
+numeri: [
+  { q:'Quale numero è più grande?', opts:['−3','0','+2','−10'], ans:'+2', hint:'Sulla retta, più stai a destra = più grande.' },
+  { q:'Ordina dal più piccolo: +2, −5, 0, −1', opts:['−5 < −1 < 0 < +2','0 < −1 < −5 < +2','−1 < −5 < 0 < +2','+2 < 0 < −1 < −5'], ans:'−5 < −1 < 0 < +2', hint:'I negativi più lontani da zero sono i più piccoli.' },
+  { q:'Quanto fa (+5) + (−3)?', opts:['8','2','−2','+15'], ans:'2', hint:'Parti da +5, fai 3 passi a sinistra sulla retta.' },
+  { q:'Quanto fa (−4) + (−2)?', opts:['−6','6','−2','2'], ans:'−6', hint:'Due negativi si sommano: 4+2=6, poi metti il segno −.' },
+  { q:'Quanto fa (−4) × (−2)?', opts:['−8','8','−6','6'], ans:'8', hint:'Segni uguali → risultato positivo. 4×2=8.' },
+  { q:'Quanto fa (+6) × (−3)?', opts:['−18','18','−9','9'], ans:'−18', hint:'Segni diversi → risultato negativo. 6×3=18.' },
+  { q:'Quanto fa (−12) ÷ (+4)?', opts:['−3','3','−8','8'], ans:'−3', hint:'Segni diversi → negativo. 12÷4=3.' },
+  { q:'Quale affermazione è VERA?', opts:['−7 > −3','−1 < 0','0 < −5','+2 < −4'], ans:'−1 < 0', hint:'Zero è più grande di qualsiasi numero negativo.' },
+  { q:'Quanto fa (+3) − (−5)?', opts:['−2','2','8','−8'], ans:'8', hint:'Sottrarre un negativo = sommare il positivo: 3+5=8.' },
+  { q:'La temperatura era −3°C e è scesa di 4°C. Ora è:', opts:['−7°C','+1°C','−1°C','+7°C'], ans:'−7°C', hint:'−3 + (−4) = −7. Scendere = sommare un negativo.' },
+],
+
+frazioni: [
+  { q:'Qual è la forma ridotta di 4/8?', opts:['1/2','2/4','3/6','4/8'], ans:'1/2', hint:'Dividi sia numeratore che denominatore per 4.' },
+  { q:'Quale frazione è la più grande?', opts:['1/4','1/3','1/5','1/6'], ans:'1/3', hint:'Stesso numeratore: il denominatore più piccolo dà la frazione più grande.' },
+  { q:'Quanto fa 1/2 + 1/4?', opts:['2/6','3/4','2/8','1/3'], ans:'3/4', hint:'Riduci allo stesso denominatore: 2/4 + 1/4 = 3/4.' },
+  { q:'Quanto fa 3/5 × 2/3?', opts:['6/15','5/8','2/5','3/8'], ans:'2/5', hint:'Moltiplica: (3×2)/(5×3) = 6/15 = 2/5.' },
+  { q:'Quanto fa 3/4 − 1/2?', opts:['2/2','1/4','1/2','2/4'], ans:'1/4', hint:'1/2 = 2/4. Poi 3/4 − 2/4 = 1/4.' },
+  { q:'Qual è il reciproco di 3/5?', opts:['3/5','5/3','1/5','6/10'], ans:'5/3', hint:'Capovolgi la frazione: numeratore e denominatore si scambiano.' },
+  { q:'Quanto fa 2/3 ÷ 4/9?', opts:['8/27','3/2','1/2','9/6'], ans:'3/2', hint:'Dividi = moltiplica per il reciproco: 2/3 × 9/4 = 18/12 = 3/2.' },
+  { q:'Quale frazione è equivalente a 6/9?', opts:['3/4','2/3','1/3','4/6'], ans:'2/3', hint:'Semplifica dividendo per 3: 6÷3=2, 9÷3=3.' },
+  { q:'Un quarto di 20 è:', opts:['10','4','5','8'], ans:'5', hint:'1/4 × 20 = 20÷4 = 5.' },
+  { q:'Tre ottavi (3/8) scritti come percentuale è circa:', opts:['37,5%','38%','30%','25%'], ans:'37,5%', hint:'3÷8 = 0,375 → moltiplica per 100.' },
+],
+
+geometria: [
+  // FORMULE DIRETTE
+  { q:'Rettangolo: base=6 cm, altezza=4 cm. Qual è l\'area?', opts:['24 cm²','20 cm²','10 cm²','16 cm²'], ans:'24 cm²', hint:'A = base × altezza = 6 × 4', vis:'▭ b=6, h=4' },
+  { q:'Triangolo: base=8 cm, altezza=5 cm. Qual è l\'area?', opts:['40 cm²','13 cm²','20 cm²','80 cm²'], ans:'20 cm²', hint:'A = (base × altezza) ÷ 2 = (8×5)÷2', vis:'△ b=8, h=5' },
+  { q:'Trapezio: B=10, b=6, h=4. Qual è l\'area?', opts:['40 cm²','32 cm²','60 cm²','24 cm²'], ans:'32 cm²', hint:'A = (B+b)/2 × h = (10+6)/2 × 4 = 8×4', vis:'⌂ B=10, b=6, h=4' },
+  { q:'Parallelogramma: base=7 cm, altezza=3 cm. Area?', opts:['21 cm²','10 cm²','42 cm²','14 cm²'], ans:'21 cm²', hint:'A = base × altezza = 7 × 3', vis:'⬧ b=7, h=3' },
+  { q:'Quadrato con lato=5 cm. Qual è l\'area?', opts:['20 cm²','10 cm²','25 cm²','15 cm²'], ans:'25 cm²', hint:'A = lato² = 5² = 25', vis:'■ l=5' },
+  // FORMULE INVERSE — trovare un lato
+  { q:'📐 FORMULA INVERSA: Un rettangolo ha area=30 cm² e altezza=5 cm. Quanto è la base?', opts:['6 cm','25 cm','150 cm','3 cm'], ans:'6 cm', hint:'Base = Area ÷ altezza = 30 ÷ 5', vis:'Area=30, h=5 → b=?' },
+  { q:'📐 FORMULA INVERSA: Un triangolo ha area=18 cm² e altezza=6 cm. Quanto è la base?', opts:['3 cm','6 cm','108 cm','12 cm'], ans:'6 cm', hint:'b = (2 × Area) ÷ h = (2×18)÷6 = 36÷6', vis:'Area=18, h=6 → b=?' },
+  { q:'📐 FORMULA INVERSA: Un parallelogramma ha area=42 cm² e base=7 cm. Quanto è l\'altezza?', opts:['6 cm','49 cm','294 cm','5 cm'], ans:'6 cm', hint:'h = Area ÷ base = 42 ÷ 7', vis:'Area=42, b=7 → h=?' },
+  { q:'📐 FORMULA INVERSA: Un quadrato ha area=64 cm². Quanto è il lato?', opts:['8 cm','16 cm','32 cm','4 cm'], ans:'8 cm', hint:'lato = √Area = √64 = 8. Usa la tavola delle radici!', vis:'Area=64 → l=?' },
+  { q:'📐 FORMULA INVERSA: Un trapezio ha area=20 cm², h=4 cm, base minore b=3. Quanto è la base maggiore B?', opts:['7 cm','5 cm','10 cm','17 cm'], ans:'7 cm', hint:'A=(B+b)/2×h → B = (2×A/h) − b = (2×20/4)−3 = 10−3', vis:'Area=20, h=4, b=3 → B=?' },
+  // PERIMETRI
+  { q:'Rettangolo: b=7 cm, h=3 cm. Qual è il perimetro?', opts:['20 cm','21 cm','10 cm','40 cm'], ans:'20 cm', hint:'P = 2×(b+h) = 2×(7+3) = 2×10 = 20', vis:'▭ perimetro' },
+  { q:'Quadrato con lato=6 cm. Perimetro?', opts:['24 cm','12 cm','36 cm','18 cm'], ans:'24 cm', hint:'P = 4 × lato = 4×6 = 24', vis:'■ perimetro' },
+  // FORMULA INVERSA PERIMETRO
+  { q:'📐 INVERSA: Un rettangolo ha perimetro=24 cm e base=8 cm. Quanto è l\'altezza?', opts:['4 cm','16 cm','3 cm','12 cm'], ans:'4 cm', hint:'P=2(b+h) → h = P/2 − b = 12−8 = 4', vis:'P=24, b=8 → h=?' },
+  { q:'📐 INVERSA: Un quadrato ha perimetro=36 cm. Quanto è il lato?', opts:['9 cm','12 cm','4 cm','18 cm'], ans:'9 cm', hint:'P = 4×l → l = P÷4 = 36÷4', vis:'P=36 → l=?' },
+  { q:'Se raddoppio la base di un rettangolo (altezza invariata), l\'area:', opts:['rimane uguale','si raddoppia','si dimezza','si quadruplica'], ans:'si raddoppia', hint:'A=b×h. Se b→2b, allora A→2b×h = 2×(b×h).', vis:'' },
+],
+
+pitagora: [
+  { q:'Cateti 3 e 4. Ipotenusa?', opts:['5','7','6','4,5'], ans:'5', hint:'3²+4²=9+16=25. √25=5! È la terna pitagorica più famosa.' },
+  { q:'Cateti 6 e 8. Ipotenusa?', opts:['14','10','9','12'], ans:'10', hint:'36+64=100. √100=10.' },
+  { q:'Cateti 5 e 12. Ipotenusa?', opts:['17','13','15','11'], ans:'13', hint:'25+144=169. √169=13.' },
+  { q:'Cateti 8 e 15. Ipotenusa?', opts:['17','21','23','19'], ans:'17', hint:'64+225=289. √289=17.' },
+  // INVERSE — trovare un cateto
+  { q:'📐 INVERSA: Ipotenusa=10, un cateto=6. Quanto è l\'altro cateto?', opts:['4','8','6','√136'], ans:'8', hint:'b=√(c²−a²)=√(100−36)=√64=8.' },
+  { q:'📐 INVERSA: Ipotenusa=13, un cateto=5. Quanto è l\'altro cateto?', opts:['8','10','12','9'], ans:'12', hint:'b=√(169−25)=√144=12.' },
+  { q:'📐 INVERSA: Ipotenusa=17, un cateto=8. Quanto è l\'altro cateto?', opts:['9','15','12','10'], ans:'15', hint:'b=√(289−64)=√225=15.' },
+  { q:'L\'ipotenusa è...', opts:['il lato più corto','qualsiasi lato','il lato opposto all\'angolo retto','adiacente all\'angolo retto'], ans:'il lato opposto all\'angolo retto', hint:'L\'ipotenusa è sempre di fronte al 90°.' },
+  { q:'Un triangolo con lati 3, 4, 6 è rettangolo?', opts:['Sì','No — non vale a²+b²=c²','Non si può dire','Solo se l\'angolo è 45°'], ans:'No — non vale a²+b²=c²', hint:'3²+4²=25. 6²=36. 25≠36, quindi NON è rettangolo.' },
+  { q:'Un quadrato con diagonale=10 cm: quanto è il lato? (l²+l²=100)', opts:['5 cm','√50 ≈ 7,07 cm','√200 cm','10 cm'], ans:'√50 ≈ 7,07 cm', hint:'2l²=100 → l²=50 → l=√50≈7,07.' },
+],
+
+algebra: [
+  { q:'Se x + 4 = 9, quanto vale x?', opts:['5','13','4','6'], ans:'5', hint:'Togli 4 da entrambe le parti: x = 9 − 4.' },
+  { q:'Quanto vale 3x se x = 4?', opts:['7','34','12','1'], ans:'12', hint:'3x = 3 × 4 = 12.' },
+  { q:'Se 2x = 10, quanto vale x?', opts:['5','20','8','12'], ans:'5', hint:'Dividi entrambe le parti per 2: x = 10÷2.' },
+  { q:'Se x − 3 = 7, quanto vale x?', opts:['4','10','21','−4'], ans:'10', hint:'Aggiungi 3 a entrambe le parti: x = 7+3.' },
+  { q:'Quale espressione è un MONOMIO?', opts:['x+2','3x²','x+y','2x−1'], ans:'3x²', hint:'Un monomio è un singolo termine senza somme o differenze.' },
+  { q:'Quanto vale 2x + 3 se x = 5?', opts:['10','13','16','8'], ans:'13', hint:'Sostituisci: 2×5+3 = 10+3 = 13.' },
+  { q:'Se 3x + 1 = 10, quanto vale x?', opts:['3','9','11','4'], ans:'3', hint:'Prima togli 1: 3x=9. Poi dividi per 3: x=3.' },
+  { q:'Somma dei monomi 2x e 5x:', opts:['10x²','7x','7x²','3x'], ans:'7x', hint:'Somma i coefficienti (2+5=7) e tieni la stessa lettera.' },
+  { q:'Quanto vale −2x se x = −3?', opts:['−6','6','+2','−1'], ans:'6', hint:'−2 × (−3) = +6. Segni uguali → positivo.' },
+  { q:'Se x/4 = 3, quanto vale x?', opts:['0,75','7','12','1'], ans:'12', hint:'Moltiplica entrambe le parti per 4: x = 3×4 = 12.' },
+],
+
+statistica: [
+  { q:'Media di: 4, 6, 8, 2', opts:['5','6','4','7'], ans:'5', hint:'Somma=20. Media=20÷4=5.' },
+  { q:'Media di: 10, 6, 8, 4, 2', opts:['5','6','4','7'], ans:'6', hint:'Somma=30. Media=30÷5=6.' },
+  { q:'Moda di: 3, 5, 3, 7, 5, 3', opts:['5','7','3','6'], ans:'3', hint:'3 compare 3 volte — è il dato più frequente.' },
+  { q:'Mediana di: 2, 4, 6, 8, 10', opts:['4','6','5','8'], ans:'6', hint:'5 elementi: il terzo è il centrale → 6.' },
+  { q:'Mediana di: 3, 5, 7, 9 (4 elementi)', opts:['6','5','7','4'], ans:'6', hint:'Con 4 elementi: media dei due centrali = (5+7)/2 = 6.' },
+  { q:'Moda di: 1, 2, 2, 3, 3, 3, 4', opts:['1','2','3','4'], ans:'3', hint:'3 compare 3 volte, più di tutti.' },
+  { q:'Media di: 0, 0, 6, 0', opts:['6','2','1,5','3'], ans:'1,5', hint:'Somma=6. Media=6÷4=1,5. Anche gli zeri contano!' },
+  { q:'Ordina per trovare la mediana di: 5, 1, 9, 3, 7', opts:['5','3','1','7'], ans:'5', hint:'Ordinati: 1,3,5,7,9. Il valore di mezzo (3°) è 5.' },
+  { q:'Se aggiungessi il dato 100 a {2,3,4,5,6}, la MEDIA…', opts:['non cambia','sale molto','scende','rimane circa uguale'], ans:'sale molto', hint:'100 è molto più grande degli altri, alza la media di molto.' },
+  { q:'La MEDIANA è più "robusta" della media perché:', opts:['è sempre più grande','non è influenzata dai valori estremi','è più facile da calcolare','è uguale alla moda'], ans:'non è influenzata dai valori estremi', hint:'Anche se c\'è un dato abnorme, la mediana non cambia tanto.' },
+],
+
+};
+
+// ═══════════════════════════════════════════
+// LESSONS HTML
+// ═══════════════════════════════════════════
+const LESSONS = {
+numeri: `
+<div class="card">
+  <h2 style="color:#ef4444">± I Numeri Relativi</h2>
+  <p>I numeri relativi hanno un <strong>segno</strong>: positivi (+) o negativi (−). Pensa alla <strong>temperatura</strong> o ai <strong>piani di un palazzo</strong>: il −2 è il secondo piano interrato!</p>
+  <div class="vb vb-orange">
+    <h3>🌡️ Tocca i numeri sulla retta:</h3>
+    <div class="nl-scroll"><div class="nl-track" id="numLine"><div class="nl-axis"></div></div></div>
+  </div>
+  <div class="vb vb-teal">
+    <h3>📌 Ordine sulla retta</h3>
+    <p>Più andiamo a <strong>destra</strong> → numero più grande<br>
+    Più andiamo a <strong>sinistra</strong> → numero più piccolo<br><br>
+    −5 &lt; −3 &lt; −1 &lt; 0 &lt; +1 &lt; +3 &lt; +5</p>
+  </div>
+  <div class="vb vb-green">
+    <h3>➕ Regola della somma</h3>
+    <p>Stessi segni → somma i valori, tieni il segno<br>
+    Segni diversi → sottrai il minore dal maggiore, prendi il segno del più grande</p>
+  </div>
+</div>`,
+
+frazioni: `
+<div class="card">
+  <h2 style="color:#f59e0b">½ Le Frazioni</h2>
+  <p>Una frazione è una <strong>parte di un intero</strong>. Il numero sotto si chiama <strong>denominatore</strong> (quante parti), quello sopra <strong>numeratore</strong> (quante ne prendiamo).</p>
+  <div class="vb vb-yellow">
+    <h3>🍕 Muovi i cursori:</h3>
+    <div class="slider-row"><label>Numeratore (parti colorate): <strong id="fNum">3</strong></label>
+      <input type="range" min="1" max="8" value="3" id="fSlNum" oninput="updateFrac()"></div>
+    <div class="slider-row"><label>Denominatore (parti totali): <strong id="fDen">4</strong></label>
+      <input type="range" min="2" max="8" value="4" id="fSlDen" oninput="updateFrac()"></div>
+    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:8px">
+      <div class="frac-parts" id="fracParts"></div>
+      <div style="font-family:var(--font);font-weight:900;font-size:32px;color:var(--primary);text-align:center;min-width:80px">
+        <div id="fDispN">3</div><div style="border-top:3px solid var(--primary);margin:4px 0"></div><div id="fDispD">4</div>
+        <div style="font-size:14px;color:var(--text-light);margin-top:6px" id="fPct"></div>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+geometria: `
+<div class="card">
+  <h2 style="color:#3b82f6">🔷 Geometria: Aree & Formule Inverse</h2>
+  <p>L'area misura quanto <em>spazio occupa</em> una figura. Si misura in <strong>cm², m²</strong>…</p>
+  <div class="pills" id="geomPills">
+    <div class="pill active" onclick="showGeomShape(this,'rect')">▭ Rettangolo</div>
+    <div class="pill" onclick="showGeomShape(this,'tri')">△ Triangolo</div>
+    <div class="pill" onclick="showGeomShape(this,'para')">⬧ Parallelogramma</div>
+    <div class="pill" onclick="showGeomShape(this,'trap')">⌂ Trapezio</div>
+    <div class="pill" onclick="showGeomShape(this,'sq')">■ Quadrato</div>
+  </div>
+  <div id="geomShape"></div>
+  <div class="vb vb-purple" style="margin-top:16px">
+    <h3>🔁 Come si usa la formula inversa?</h3>
+    <p>Se conosco l'area ma non un lato, <strong>isolo</strong> il valore cercato:<br>
+    A = b×h &nbsp;→&nbsp; <strong>b = A÷h</strong> &nbsp;oppure&nbsp; <strong>h = A÷b</strong></p>
+  </div>
+</div>`,
+
+pitagora: `
+<div class="card">
+  <h2 style="color:#8b5cf6">📐 Il Teorema di Pitagora</h2>
+  <p>In un triangolo <strong>rettangolo</strong>: la somma dei quadrati dei due cateti = il quadrato dell'ipotenusa.</p>
+  <div style="text-align:center;margin:16px 0">
+    <span class="formula formula-purple">a² + b² = c²</span>
+    <p style="font-size:14px;color:var(--text-light);margin-top:8px">c = ipotenusa (lato più lungo, di fronte a 90°)</p>
+  </div>
+  <div class="vb vb-purple">
+    <h3>🎮 Muovi i cursori — il triangolo si ridisegna!</h3>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div class="slider-row" style="flex:1;min-width:120px">
+        <label>Cateto a: <strong id="pA">3</strong></label>
+        <input type="range" min="1" max="9" value="3" id="slPA" oninput="drawPita()">
+      </div>
+      <div class="slider-row" style="flex:1;min-width:120px">
+        <label>Cateto b: <strong id="pB">4</strong></label>
+        <input type="range" min="1" max="9" value="4" id="slPB" oninput="drawPita()">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:10px">
+      <canvas id="pitaCanvas" width="320" height="260"></canvas>
+    </div>
+    <div class="geom-result" id="pitaResult"></div>
+  </div>
+  <div class="vb vb-blue">
+    <h3>🔁 Formula inversa (trovare un cateto)</h3>
+    <p>Se conosco c e un cateto a:<br>
+    <strong>b = √(c² − a²)</strong></p>
+  </div>
+</div>`,
+
+algebra: `
+<div class="card">
+  <h2 style="color:#22c55e">🔤 Algebra: Lettere e Equazioni</h2>
+  <p>In algebra le <strong>lettere sostituiscono numeri sconosciuti</strong>. È come un gioco dove <strong>x</strong> è la risposta da trovare!</p>
+  <div class="vb vb-green">
+    <h3>🎁 La scatola misteriosa</h3>
+    <p>📦 + 3 = 7 &nbsp;→&nbsp; quante palline nella scatola?<br>
+    Con le lettere: &nbsp;<strong>x + 3 = 7 → x = 4</strong></p>
+  </div>
+  <div class="vb vb-teal">
+    <h3>⚖️ Regola d'oro</h3>
+    <p>Quello che fai a <strong>sinistra</strong> dell'uguale lo fai anche a <strong>destra</strong>.</p>
+    <p style="margin-top:8px">Esempio: &nbsp;x + 5 = 12<br>
+    → tolgo 5 da entrambe le parti<br>
+    → x = 12 − 5 = <strong>7</strong> ✅</p>
+  </div>
+  <div class="vb vb-orange">
+    <h3>📚 Tipi di espressioni</h3>
+    <p>🔹 <strong>Monomio</strong>: un solo termine → 3x², −5y, 2ab<br>
+    🔹 <strong>Polinomio</strong>: più monomi sommati → 3x + 2y − 1</p>
+  </div>
+</div>`,
+
+statistica: `
+<div class="card">
+  <h2 style="color:#f59e0b">📊 Statistica: Media, Moda, Mediana</h2>
+  <p>La statistica ci aiuta a <strong>descrivere e capire i dati</strong>. I tre indicatori principali si chiamano <em>indici di posizione centrale</em>.</p>
+  <div class="vb vb-yellow">
+    <h3>📊 Esempio: voti della settimana</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0" id="votiRow"></div>
+    <div id="statCalc" style="font-family:var(--font);font-weight:700;font-size:15px;line-height:2.2;margin-top:10px"></div>
+  </div>
+  <div class="vb vb-teal">
+    <h3>📌 Differenza chiave</h3>
+    <p>🔹 <strong>Media</strong>: è influenzata dai valori estremi<br>
+    🔹 <strong>Mediana</strong>: è "robusta" (non cambia con i valori anomali)<br>
+    🔹 <strong>Moda</strong>: il valore che "vince" per frequenza</p>
+  </div>
+</div>`,
+};
+
+// ═══════════════════════════════════════════
+// PAGE NAVIGATION
+// ═══════════════════════════════════════════
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const pages = { home:'pageHome', stats:'pageStats', settings:'pageSettings' };
+  const navs  = { home:'nav-home', stats:'nav-stats', settings:'nav-set' };
+  if(pages[p]) document.getElementById(pages[p]).classList.add('active');
+  if(navs[p]) document.getElementById(navs[p]).classList.add('active');
+  if(p==='stats') renderStats();
+  window.scrollTo(0,0);
+}
+
+function showTopic(name) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('pageTopicLesson').classList.add('active');
+  if(name==='geometria') document.getElementById('nav-geo').classList.add('active');
+
+  const titles = {
+    numeri:'± Numeri Relativi',
+    frazioni:'½ Frazioni',
+    geometria:'🔷 Geometria & Aree',
+    pitagora:'📐 Teorema di Pitagora',
+    algebra:'🔤 Algebra',
+    statistica:'📊 Statistica',
+  };
+  document.getElementById('topicTitle').textContent = titles[name]||name;
+  document.getElementById('lessonContent').innerHTML = LESSONS[name]||'';
+  state.topic = name;
+  state.quizIdx = 0;
+  state.quizAnswered = false;
+
+  // Init lesson interactives
+  if(name==='numeri') setTimeout(initNumLine,100);
+  if(name==='frazioni') setTimeout(()=>{updateFrac();},100);
+  if(name==='geometria') setTimeout(()=>showGeomShape(document.querySelector('#geomPills .pill'),'rect'),100);
+  if(name==='pitagora') setTimeout(drawPita,100);
+  if(name==='statistica') setTimeout(initStat,100);
+
+  renderQuiz(name);
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════════
+function renderQuiz(topic) {
+  const data = QUIZZES[topic];
+  const idx = state.quizIdx;
+  const q = data[idx];
+  const total = data.length;
+
+  // Progress dots
+  const prog = document.getElementById('qProgress');
+  prog.innerHTML = data.map((_,i)=>{
+    let cls = 'q-dot';
+    const p = state.progress[topic];
+    if(i<idx) cls+=' done-ok'; // simplification
+    if(i===idx) cls+=' current';
+    return `<div class="${cls}">${i+1}</div>`;
+  }).join('');
+
+  document.getElementById('qProgBar').style.width = (idx/total*100)+'%';
+
+  const area = document.getElementById('quizArea');
+  const qTitle = document.getElementById('exTitle');
+  qTitle.textContent = `💪 Esercizio ${idx+1} di ${total}`;
+
+  const visHtml = q.vis ? `<div class="q-visual">📊 ${q.vis}</div>` : '';
+
+  area.innerHTML = `
+    <div class="q-card">
+      <div class="q-num">DOMANDA ${idx+1} / ${total}</div>
+      ${visHtml}
+      <div class="q-text">${q.q}</div>
+      <div class="opts four-opts" id="optsGrid">
+        ${q.opts.map(o=>`<button class="opt-btn" onclick="checkAns(this,'${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}','${topic}')">${o}</button>`).join('')}
+      </div>
+      <button class="hint-btn" onclick="toggleHint()">💡 Suggerimento</button>
+      <div class="hint-box" id="hintBox">${q.hint}</div>
+      <div class="feedback" id="fbBox"></div>
+    </div>`;
+}
+
+function checkAns(btn, chosen, correct, topic) {
+  if(state.quizAnswered) return;
+  state.quizAnswered = true;
+  const fb = document.getElementById('fbBox');
+  const grid = document.getElementById('optsGrid');
+
+  // lock all
+  grid.querySelectorAll('.opt-btn').forEach(b=>b.classList.add('locked'));
+
+  if(chosen===correct) {
+    btn.classList.add('correct');
+    fb.innerHTML = '🎉 Bravo! Risposta corretta!';
+    fb.className = 'feedback show ok';
+    playCorrect();
+    addPoints(10);
+    state.progress[topic].correct++;
+  } else {
+    btn.classList.add('wrong');
+    grid.querySelectorAll('.opt-btn').forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); });
+    fb.innerHTML = `❌ Non è quella. La risposta giusta era: <strong>${correct}</strong>`;
+    fb.className = 'feedback show ko';
+    playWrong();
+  }
+  state.progress[topic].done++;
+
+  // Next
+  const data = QUIZZES[topic];
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'next-btn';
+  nextBtn.innerHTML = state.quizIdx >= data.length-1 ? '🏆 Ricomincia da capo' : 'Prossima domanda →';
+  nextBtn.onclick = () => {
+    state.quizIdx = (state.quizIdx+1) % data.length;
+    state.quizAnswered = false;
+    renderQuiz(topic);
+    saveProgress();
+    updateHome();
+  };
+  document.querySelector('.q-card').appendChild(nextBtn);
+}
+
+function toggleHint() {
+  document.getElementById('hintBox').classList.toggle('show');
+}
+
+// ═══════════════════════════════════════════
+// LESSON INTERACTIVES
+// ═══════════════════════════════════════════
+
+// Number line
+function initNumLine() {
+  const nl = document.getElementById('numLine');
+  if(!nl) return;
+  nl.innerHTML = '<div class="nl-axis"></div>';
+  for(let i=-5;i<=5;i++){
+    const it = document.createElement('div');
+    it.className = 'nl-item ' + (i<0?'neg':i===0?'zero':'pos');
+    const lbl = i>0?'+'+i:String(i);
+    it.innerHTML = `<div class="nl-dot">${lbl}</div><div class="nl-lbl">${i<0?'neg':i===0?'zero':'pos'}</div>`;
+    it.onclick=()=>{ speak(lbl); it.querySelector('.nl-dot').style.transform='scale(1.4)'; setTimeout(()=>it.querySelector('.nl-dot').style.transform='',400); };
+    nl.appendChild(it);
+  }
+}
+
+// Fraction
+function updateFrac() {
+  const ns = document.getElementById('fSlNum');
+  const ds = document.getElementById('fSlDen');
+  if(!ns||!ds) return;
+  const den = parseInt(ds.value);
+  ns.max = den;
+  const num = Math.min(parseInt(ns.value), den);
+  ns.value = num;
+  document.getElementById('fNum').textContent = num;
+  document.getElementById('fDen').textContent = den;
+  document.getElementById('fDispN').textContent = num;
+  document.getElementById('fDispD').textContent = den;
+  document.getElementById('fPct').textContent = Math.round(num/den*100)+'%';
+  const parts = document.getElementById('fracParts');
+  parts.innerHTML = '';
+  for(let i=0;i<den;i++){
+    const p=document.createElement('div');
+    p.className='fp'+(i<num?' on':'');
+    parts.appendChild(p);
+  }
+}
+
+// Geometry shape display
+const GEOM_SHAPES = {
+  rect:{ name:'Rettangolo', formula:'A = base × altezza', inv:'base = A ÷ h &nbsp;|&nbsp; h = A ÷ base', color:'#3b82f6', vars:['base','altezza'],
+    calc:(a,b)=>a*b,
+    draw:(ctx,a,b,sc)=>{
+      ctx.fillStyle='rgba(59,130,246,0.12)'; ctx.fillRect(40,40,a*sc,b*sc);
+      ctx.strokeStyle='#3b82f6'; ctx.lineWidth=3; ctx.strokeRect(40,40,a*sc,b*sc);
+      ctx.fillStyle='#3b82f6'; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('b='+a, 40+a*sc/2, 40+b*sc+22);
+      ctx.textAlign='right'; ctx.fillText('h='+b, 36, 40+b*sc/2+6);
+    }},
+  tri:{ name:'Triangolo', formula:'A = (base × altezza) ÷ 2', inv:'base = (2×A) ÷ h &nbsp;|&nbsp; h = (2×A) ÷ base', color:'#ef4444', vars:['base','altezza'],
+    calc:(a,b)=>a*b/2,
+    draw:(ctx,a,b,sc)=>{
+      ctx.beginPath(); ctx.moveTo(40+a*sc/2,30); ctx.lineTo(40,30+b*sc); ctx.lineTo(40+a*sc,30+b*sc); ctx.closePath();
+      ctx.fillStyle='rgba(239,68,68,0.12)'; ctx.fill();
+      ctx.strokeStyle='#ef4444'; ctx.lineWidth=3; ctx.stroke();
+      ctx.setLineDash([5,4]); ctx.strokeStyle='#aaa'; ctx.beginPath();
+      ctx.moveTo(40+a*sc/2,30); ctx.lineTo(40+a*sc/2,30+b*sc); ctx.stroke(); ctx.setLineDash([]);
+    }},
+  para:{ name:'Parallelogramma', formula:'A = base × altezza', inv:'base = A ÷ h &nbsp;|&nbsp; h = A ÷ base', color:'#8b5cf6', vars:['base','altezza'],
+    calc:(a,b)=>a*b,
+    draw:(ctx,a,b,sc)=>{
+      const off=25;
+      ctx.beginPath(); ctx.moveTo(40+off,30); ctx.lineTo(40+off+a*sc,30); ctx.lineTo(40+a*sc,30+b*sc); ctx.lineTo(40,30+b*sc); ctx.closePath();
+      ctx.fillStyle='rgba(139,92,246,0.12)'; ctx.fill();
+      ctx.strokeStyle='#8b5cf6'; ctx.lineWidth=3; ctx.stroke();
+    }},
+  trap:{ name:'Trapezio', formula:'A = (B + b) × h ÷ 2', inv:'B = (2×A ÷ h) − b', color:'#22c55e', vars:['base magg. (B)','altezza'],
+    calc:(B,h)=>(B+Math.round(B*0.6))*h/2,
+    draw:(ctx,B,h,sc)=>{
+      const b=Math.round(B*0.6), off=(B-b)*sc/2;
+      ctx.beginPath(); ctx.moveTo(40+off,30); ctx.lineTo(40+off+b*sc,30); ctx.lineTo(40+B*sc,30+h*sc); ctx.lineTo(40,30+h*sc); ctx.closePath();
+      ctx.fillStyle='rgba(34,197,94,0.12)'; ctx.fill();
+      ctx.strokeStyle='#22c55e'; ctx.lineWidth=3; ctx.stroke();
+      ctx.fillStyle='#22c55e'; ctx.font='bold 13px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('B='+B, 40+B*sc/2, 30+h*sc+22);
+      ctx.fillText('b≈'+b, 40+off+b*sc/2, 22);
+    }},
+  sq:{ name:'Quadrato', formula:'A = lato²', inv:'lato = √A', color:'#f59e0b', vars:['lato','lato'],
+    calc:(a)=>a*a,
+    draw:(ctx,a,_,sc)=>{
+      ctx.fillStyle='rgba(245,158,11,0.12)'; ctx.fillRect(40,40,a*sc,a*sc);
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3; ctx.strokeRect(40,40,a*sc,a*sc);
+      ctx.fillStyle='#f59e0b'; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center';
+      ctx.fillText('l='+a, 40+a*sc/2, 40+a*sc+22);
+    }},
+};
+let gState = {key:'rect', v1:5, v2:4};
+function showGeomShape(pillEl, key) {
+  document.querySelectorAll('#geomPills .pill').forEach(p=>p.classList.remove('active'));
+  if(pillEl) pillEl.classList.add('active');
+  gState.key=key;
+  const s=GEOM_SHAPES[key];
+  const html = `
+    <div class="vb vb-blue">
+      <h3>${s.name}</h3>
+      <div style="text-align:center;margin:10px 0"><span class="formula formula-blue" style="font-size:16px;padding:10px 20px">${s.formula}</span></div>
+      <div style="font-size:13px;color:var(--purple);font-family:var(--font);font-weight:700;margin-bottom:14px;text-align:center">🔁 Inversa: ${s.inv}</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+        <canvas id="geomCanvas" width="280" height="200" style="flex-shrink:0;max-width:100%"></canvas>
+        <div style="flex:1;min-width:130px">
+          <div class="slider-row"><label>${s.vars[0]}: <strong id="gv1">${gState.v1}</strong></label>
+            <input type="range" min="2" max="8" value="${gState.v1}" oninput="gState.v1=+this.value;document.getElementById('gv1').textContent=this.value;drawGeom()" style="accent-color:${s.color}">
+          </div>
+          ${key!=='sq'?`<div class="slider-row"><label>${s.vars[1]}: <strong id="gv2">${gState.v2}</strong></label>
+            <input type="range" min="2" max="8" value="${gState.v2}" oninput="gState.v2=+this.value;document.getElementById('gv2').textContent=this.value;drawGeom()" style="accent-color:${s.color}"></div>`:''}
+          <div class="geom-result" id="geomResult">A = …</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('geomShape').innerHTML=html;
+  setTimeout(drawGeom,50);
+}
+function drawGeom() {
+  const s=GEOM_SHAPES[gState.key];
+  const c=document.getElementById('geomCanvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,280,200);
+  s.draw(ctx, gState.v1, gState.v2, 26);
+  const area = s.calc(gState.v1, gState.v2);
+  document.getElementById('geomResult').innerHTML = `Area = ${area.toFixed(1)} cm²`;
+}
+
+// Pitagora canvas
+function drawPita() {
+  const a=parseInt(document.getElementById('slPA')?.value||3);
+  const b=parseInt(document.getElementById('slPB')?.value||4);
+  document.getElementById('pA').textContent=a;
+  document.getElementById('pB').textContent=b;
+  const c=Math.sqrt(a*a+b*b);
+  const canvas=document.getElementById('pitaCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=320,H=260,pad=50,sc=24;
+  ctx.clearRect(0,0,W,H);
+  const ox=pad, oy=H-pad, px=ox+a*sc, py=oy, qx=ox, qy=oy-b*sc;
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(px,py); ctx.lineTo(qx,qy); ctx.closePath();
+  ctx.fillStyle='rgba(139,92,246,0.1)'; ctx.fill();
+  [[ox,oy,px,py,'#ef4444',`a=${a}`,(ox+px)/2,oy+20],
+   [ox,oy,qx,qy,'#3b82f6',`b=${b}`,ox-22,(oy+qy)/2],
+   [px,py,qx,qy,'#8b5cf6',`c≈${c.toFixed(2)}`,(px+qx)/2+18,(py+qy)/2-8]
+  ].forEach(([x1,y1,x2,y2,col,lbl,tx,ty])=>{
+    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    ctx.fillStyle=col; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center'; ctx.fillText(lbl,tx,ty);
+  });
+  const sq=12; ctx.strokeStyle='#888'; ctx.lineWidth=1.5; ctx.strokeRect(ox,oy-sq,sq,sq);
+  document.getElementById('pitaResult').innerHTML = `${a}² + ${b}² = ${a*a} + ${b*b} = <strong>${a*a+b*b}</strong> → c = √${a*a+b*b} ≈ <strong>${c.toFixed(2)}</strong>`;
+}
+
+// Statistics
+function initStat() {
+  const voti=[6,7,8,6,9,7,6,8];
+  const row=document.getElementById('votiRow');
+  if(!row) return;
+  row.innerHTML=voti.map(v=>`<div style="width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:900;font-size:20px;background:var(--yellow-light);border:3px solid var(--yellow);color:#92400e">${v}</div>`).join('');
+  const media=(voti.reduce((a,b)=>a+b,0)/voti.length).toFixed(2);
+  const sorted=[...voti].sort((a,b)=>a-b);
+  const med=(sorted[3]+sorted[4])/2;
+  const freq={}; voti.forEach(v=>freq[v]=(freq[v]||0)+1);
+  const moda=Object.entries(freq).sort((a,b)=>b[1]-a[1])[0][0];
+  document.getElementById('statCalc').innerHTML=
+    `📐 <strong>Media</strong> = (${voti.join('+')})/8 = ${voti.reduce((a,b)=>a+b,0)}/8 = <span style="color:var(--primary)">${media}</span><br>
+     🔁 <strong>Moda</strong> = valore più frequente = <span style="color:var(--accent)">${moda}</span> (appare ${freq[moda]} volte)<br>
+     📍 <strong>Mediana</strong> = ordinati: [${sorted.join(',')}] → media dei due centrali = <span style="color:var(--purple)">${med}</span>`;
+}
+
+// ═══════════════════════════════════════════
+// STATS PAGE
+// ═══════════════════════════════════════════
+function renderStats() {
+  const topics = [
+    {key:'numeri',name:'Numeri Relativi',icon:'±',color:'#ef4444'},
+    {key:'frazioni',name:'Frazioni',icon:'½',color:'#f59e0b'},
+    {key:'geometria',name:'Geometria',icon:'🔷',color:'#3b82f6'},
+    {key:'pitagora',name:'Pitagora',icon:'📐',color:'#8b5cf6'},
+    {key:'algebra',name:'Algebra',icon:'🔤',color:'#22c55e'},
+    {key:'statistica',name:'Statistica',icon:'📊',color:'#f59e0b'},
+  ];
+  const totalPts = state.points;
+  const stars = Math.min(5, Math.floor(totalPts/60));
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-box" style="grid-column:span 2">
+      <div class="sv" style="color:var(--primary)">${totalPts}</div>
+      <div class="sl">PUNTI TOTALI</div>
+      <div class="stars-row">${'⭐'.repeat(stars)}${'☆'.repeat(5-stars)}</div>
+    </div>
+    ${topics.map(t=>{
+      const p=state.progress[t.key];
+      const pct = p.done>0 ? Math.round(p.correct/p.done*100) : 0;
+      return `<div class="stat-box">
+        <div style="font-size:26px">${t.icon}</div>
+        <div class="sv" style="color:${t.color}">${pct}%</div>
+        <div class="sl">${t.name}</div>
+        <div style="font-size:11px;color:var(--text-light);margin-top:4px">${p.done} risposte</div>
+      </div>`;
+    }).join('')}
+  `;
+  document.getElementById('statDetail').innerHTML = `
+    <h2>🏆 Il tuo percorso</h2>
+    <p style="margin-top:10px">Risposte totali: <strong>${Object.values(state.progress).reduce((a,p)=>a+p.done,0)}</strong></p>
+    <p>Risposte corrette: <strong style="color:var(--green)">${Object.values(state.progress).reduce((a,p)=>a+p.correct,0)}</strong></p>
+    <p style="font-size:14px;color:var(--text-light);margin-top:12px">Continua ad esercitarti — ogni errore è un passo verso la comprensione! 🧡</p>
+  `;
+}
+
+// ═══════════════════════════════════════════
+// POINTS & HOME UPDATE
+// ═══════════════════════════════════════════
+function addPoints(n) {
+  state.points += n;
+  document.getElementById('ptsBadge').textContent = `⭐ ${state.points} pt`;
+}
+function updateHome() {
+  const tots = {numeri:10,frazioni:10,geometria:15,pitagora:10,algebra:10,statistica:10};
+  Object.keys(tots).forEach(k=>{
+    const p=state.progress[k];
+    const fill=document.getElementById('fill-'+k);
+    if(fill) fill.style.width = Math.min(100, p.done/tots[k]*100)+'%';
+  });
+}
+
+// ═══════════════════════════════════════════
+// ACCESSIBILITY
+// ═══════════════════════════════════════════
+function toggleA(cls, btn) {
+  document.body.classList.toggle(cls);
+  btn.classList.toggle('on');
+}
+let soundOn=false;
+function toggleSound(btn) {
+  soundOn=!soundOn;
+  btn.classList.toggle('on', soundOn);
+  btn.textContent = soundOn?'🔊 Audio Attivo':'🔇 Audio OFF';
+}
+function speak(t) {
+  if(!soundOn) return;
+  try{ const u=new SpeechSynthesisUtterance(t);u.lang='it-IT';u.rate=0.9;speechSynthesis.speak(u); }catch(e){}
+}
+function playCorrect() {
+  if(!soundOn) return;
+  try{ const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);o.frequency.value=660;o.type='sine';
+    g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
+    o.start();o.stop(ctx.currentTime+0.3);
+    setTimeout(()=>{ const o2=ctx.createOscillator(),g2=ctx.createGain();o2.connect(g2);g2.connect(ctx.destination);
+      o2.frequency.value=880;g2.gain.setValueAtTime(0.25,ctx.currentTime);g2.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.25);
+      o2.start();o2.stop(ctx.currentTime+0.25); },150);
+  }catch(e){}
+}
+function playWrong() {
+  if(!soundOn) return;
+  try{ const ctx=new AudioContext(),o=ctx.createOscillator(),g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);o.frequency.value=220;o.type='sawtooth';
+    g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);
+    o.start();o.stop(ctx.currentTime+0.4);
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════
+// CALCULATOR
+// ═══════════════════════════════════════════
+let cExpr='', cPrevRes=false;
+function ci(v) {
+  const d=document.getElementById('calcDisp');
+  if(v==='C'){cExpr='';d.textContent='0';return;}
+  if(v==='='){
+    try{
+      const e=cExpr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
+      const r=Function('"use strict";return('+e+')')();
+      d.textContent=parseFloat(r.toFixed(8));
+      cExpr=String(parseFloat(r.toFixed(8)));
+      cPrevRes=true;
+    }catch(e){d.textContent='Err';cExpr='';}
+    return;
+  }
+  if(v==='±'){cExpr=cExpr?String(-parseFloat(cExpr)):cExpr;d.textContent=cExpr||'0';return;}
+  if(v==='%'){cExpr=cExpr?String(parseFloat(cExpr)/100):cExpr;d.textContent=cExpr||'0';return;}
+  if(cPrevRes&&'0123456789'.includes(v)){cExpr='';cPrevRes=false;}
+  cExpr+=v; d.textContent=cExpr;
+}
+
+// ═══════════════════════════════════════════
+// PITAGORA TABLE BUILD
+// ═══════════════════════════════════════════
+(function(){
+  const t=document.getElementById('pitaTable');
+  let h='<tr><th>×</th>';
+  for(let i=1;i<=10;i++) h+=`<th>${i}</th>`;
+  h+='</tr>';
+  for(let r=1;r<=10;r++){
+    h+=`<tr><th>${r}</th>`;
+    for(let c=1;c<=10;c++) h+=`<td class="${r===c?'diag':''}">${r*c}</td>`;
+    h+='</tr>';
+  }
+  t.innerHTML=h;
+})();
+
+// ═══════════════════════════════════════════
+// FORMULE SHEET BUILD
+// ═══════════════════════════════════════════
+(function(){
+  const defs=[
+    {icon:'▭',name:'Rettangolo',f:'A = b × h',inv:'b = A÷h &nbsp; h = A÷b &nbsp; P = 2(b+h)'},
+    {icon:'■',name:'Quadrato',f:'A = l²',inv:'l = √A &nbsp; P = 4l'},
+    {icon:'△',name:'Triangolo',f:'A = (b × h) ÷ 2',inv:'b = 2A÷h &nbsp; h = 2A÷b'},
+    {icon:'⬧',name:'Parallelogramma',f:'A = b × h',inv:'b = A÷h &nbsp; h = A÷b'},
+    {icon:'⌂',name:'Trapezio',f:'A = (B+b) × h ÷ 2',inv:'B = (2A÷h) − b'},
+    {icon:'⭕',name:'Cerchio',f:'A = π × r²',inv:'r = √(A÷π) &nbsp; C = 2πr'},
+    {icon:'📐',name:'Pitagora',f:'a² + b² = c²',inv:'b = √(c²−a²)'},
+  ];
+  document.getElementById('formuleList').innerHTML=defs.map(d=>`
+    <div class="form-row">
+      <div class="form-icon">${d.icon}</div>
+      <div class="form-content">
+        <div class="name">${d.name}</div>
+        <div class="f">${d.f}</div>
+        <div class="inv">↩ ${d.inv}</div>
+      </div>
+    </div>`).join('');
+})();
+
+// ═══════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+// ═══════════════════════════════════════════
+// SAVE / LOAD PROGRESS (localStorage)
+// ═══════════════════════════════════════════
+function saveProgress() {
+  try{ localStorage.setItem('mathup_progress', JSON.stringify({pts:state.points, prog:state.progress})); }catch(e){}
+}
+function loadProgress() {
+  try{
+    const d=JSON.parse(localStorage.getItem('mathup_progress'));
+    if(d){ state.points=d.pts||0; Object.assign(state.progress,d.prog||{}); }
+  }catch(e){}
+  document.getElementById('ptsBadge').textContent=`⭐ ${state.points} pt`;
+  updateHome();
+}
+
+// ═══════════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('installBtn').onclick = async () => {
+  if(!installPrompt) return;
+  installPrompt.prompt();
+  const r = await installPrompt.userChoice;
+  document.getElementById('install-banner').classList.remove('show');
+};
+
+// ═══════════════════════════════════════════
+// SERVICE WORKER
+// ═══════════════════════════════════════════
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+window.addEventListener('load', () => {
+  loadProgress();
+  setTimeout(()=>{
+    const s=document.getElementById('splash');
+    s.style.opacity='0';
+    setTimeout(()=>s.style.display='none',500);
+  }, 1400);
+});
+</script>
+</body>
+</html>
