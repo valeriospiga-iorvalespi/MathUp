@@ -9,7 +9,18 @@
 <meta name="apple-mobile-web-app-title" content="MathUp">
 <meta name="description" content="Matematica 2ª Media – DSA Friendly – by Valerio Spiga">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- Apple Touch Icons - tutti i formati necessari per iOS -->
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png">
+<link rel="apple-touch-icon" sizes="128x128" href="icons/icon-128.png">
+<link rel="apple-touch-icon" sizes="96x96"   href="icons/icon-96.png">
+<link rel="apple-touch-icon" sizes="72x72"   href="icons/icon-72.png">
+<!-- Favicon standard -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="96x96"   href="icons/icon-96.png">
+<link rel="shortcut icon" href="icons/icon-96.png">
 <title>MathUp – Matematica DSA</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -644,8 +655,16 @@ body.dsa-font *{letter-spacing:0.08em!important;word-spacing:0.15em!important;li
     </div>
     <div class="card">
       <h2>📲 Installazione su telefono</h2>
-      <p><strong>iPhone / iPad (Safari):</strong> tocca il pulsante Condividi ↑ → "Aggiungi alla schermata Home"</p>
-      <p><strong>Android (Chrome):</strong> tocca i tre puntini ⋮ → "Aggiungi alla schermata Home" oppure "Installa app"</p>
+      <p><strong>📱 iPhone / iPad:</strong> apri questa pagina in Safari → tocca Condividi ⬆️ → "Aggiungi alla schermata Home"</p>
+      <p><strong>🤖 Android / Chrome:</strong> tocca i tre puntini ⋮ → "Aggiungi alla schermata Home" o "Installa app"</p>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="openModal('mIos')" style="padding:12px 20px;background:var(--primary);color:white;border:none;border-radius:12px;font-family:var(--font);font-weight:800;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:8px">
+          📲 Guida passo-passo iPhone
+        </button>
+        <button onclick="document.getElementById('install-banner').classList.add('show')" style="padding:12px 20px;background:var(--accent);color:white;border:none;border-radius:12px;font-family:var(--font);font-weight:800;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:8px">
+          🤖 Installa su Android
+        </button>
+      </div>
     </div>
     <div class="author-tag">Made with 🧡 by <strong>Valerio Spiga</strong></div>
   </div>
@@ -668,11 +687,42 @@ body.dsa-font *{letter-spacing:0.08em!important;word-spacing:0.15em!important;li
   </button>
 </nav>
 
-<!-- INSTALL BANNER -->
+<!-- INSTALL BANNER — Android PWA (beforeinstallprompt) -->
 <div id="install-banner">
-  <p>📲 Installa MathUp sul tuo telefono!</p>
+  <p>📲 Installa MathUp sul telefono!</p>
   <button class="install-btn" id="installBtn">Installa</button>
   <button class="install-x" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+</div>
+
+<!-- iOS INSTALL GUIDE MODAL -->
+<div class="overlay" id="mIos" onclick="if(event.target===this)closeModal('mIos')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>📲 Installa su iPhone / iPad</h3>
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="background:var(--primary);color:white;border-radius:16px;padding:16px;font-family:var(--font);font-weight:900;font-size:18px">
+        Apri questa pagina in <strong>Safari</strong> se non ci sei già
+      </div>
+    </div>
+    <div style="font-family:var(--font);font-size:16px;line-height:1;font-weight:700">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">1</div>
+        <div>Tocca il pulsante <strong>Condividi</strong> <span style="font-size:22px">⬆️</span> nella barra in basso di Safari</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">2</div>
+        <div>Scorri verso il basso e tocca <strong>"Aggiungi alla schermata Home"</strong> 🏠</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">3</div>
+        <div>Tocca <strong>"Aggiungi"</strong> in alto a destra — fatto! 🎉</div>
+      </div>
+    </div>
+    <div style="background:var(--primary-light);border-radius:14px;padding:14px;margin-top:10px;border-left:4px solid var(--primary);font-family:var(--font);font-weight:700;font-size:14px;color:#7c2d12">
+      ✅ Apparirà l'icona arancione <strong>MathUp</strong> sulla tua schermata Home — e funziona anche senza internet!
+    </div>
+    <button class="modal-close" onclick="closeModal('mIos')">✓ Ho capito, grazie!</button>
+  </div>
 </div>
 
 <!-- ══════════════════ MODALS ══════════════════ -->
@@ -1460,19 +1510,43 @@ function loadProgress() {
 }
 
 // ═══════════════════════════════════════════
-// PWA INSTALL
+// PWA INSTALL — iOS Safari + Android Chrome
 // ═══════════════════════════════════════════
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandaloneMode = () =>
+  ('standalone' in navigator && navigator.standalone) ||
+  window.matchMedia('(display-mode: standalone)').matches;
+
+// iOS: show guide after 3 seconds if not already installed
+if (isIos && !isInStandaloneMode()) {
+  setTimeout(() => {
+    openModal('mIos');
+  }, 3000);
+}
+
+// Android / Chrome: native install prompt
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   installPrompt = e;
-  document.getElementById('install-banner').classList.add('show');
+  // Show banner after small delay
+  setTimeout(() => {
+    document.getElementById('install-banner').classList.add('show');
+  }, 1500);
 });
+
 document.getElementById('installBtn').onclick = async () => {
-  if(!installPrompt) return;
+  if (!installPrompt) return;
   installPrompt.prompt();
   const r = await installPrompt.userChoice;
   document.getElementById('install-banner').classList.remove('show');
+  if (r.outcome === 'accepted') installPrompt = null;
 };
+
+// If already installed, hide banner
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  installPrompt = null;
+});
 
 // ═══════════════════════════════════════════
 // SERVICE WORKER
