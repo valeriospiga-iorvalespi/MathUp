@@ -642,6 +642,15 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
         <div class="tc-count" id="cnt-radicali">15 esercizi</div>
         <div class="tc-bar"><div class="tc-fill" id="fill-radicali" style="width:0%;background:#06b6d4"></div></div>
       </div>
+      <div class="topic-card" onclick="showRipasso()" style="border-color:#f43f5e22;grid-column:span 2;display:flex;flex-direction:row;align-items:center;gap:16px;padding:18px" id="tc-ripasso">
+        <div class="tc-icon" style="font-size:40px">🎯</div>
+        <div style="flex:1">
+          <div class="tc-name" style="font-size:16px">Ripasso Generale</div>
+          <div class="tc-count">Sessioni da 20-30 domande miste su tutti gli argomenti</div>
+          <div class="tc-bar" style="margin-top:8px"><div class="tc-fill" id="fill-ripasso" style="width:0%;background:#f43f5e"></div></div>
+        </div>
+        <div style="font-size:28px">▶</div>
+      </div>
     </div>
     <div class="author-tag">Creato da <strong>Valerio Spiga</strong> · MathUp v1.0 · DSA Friendly 🧡</div>
   </div>
@@ -689,6 +698,10 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
       <h2>ℹ️ Informazioni</h2>
       <p><strong>MathUp</strong> è una webapp educativa pensata per studenti di 2ª media con discalculia e disgrafia, ispirata alle linee guida pedagogiche per i DSA (Legge 170/2010).</p>
       <p>Principi adottati: piccoli passi progressivi, risposta per clic (nessuna scrittura), strumenti compensativi sempre visibili, feedback immediato, rinforzo positivo.</p>
+      <div style="background:#fef3c7;border:2px solid #f59e0b;border-radius:14px;padding:14px 16px;margin:16px 0">
+        <p style="font-family:var(--font);font-weight:800;font-size:14px;color:#92400e;margin-bottom:6px">⚠️ Nota per genitori e insegnanti</p>
+        <p style="font-family:var(--font);font-weight:600;font-size:13px;color:#78350f;line-height:1.6;margin:0">Questa app è stata realizzata con il supporto dell'intelligenza artificiale. Nonostante la cura nella verifica dei contenuti, le informazioni e le risposte potrebbero contenere errori. <strong>Un adulto (genitore o insegnante) dovrebbe sempre supervisionare e verificare i contenuti prima dell'uso didattico.</strong></p>
+      </div>
       <p style="margin-top:16px;font-family:var(--font);font-weight:800;color:var(--primary)">Autore: Valerio Spiga</p>
       <p style="font-size:14px;color:var(--text-light)">Versione 1.0 · 2026</p>
     </div>
@@ -708,6 +721,64 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
     <div class="author-tag">Made with 🧡 by <strong>Valerio Spiga</strong></div>
   </div>
 
+
+  <!-- ══ PAGE RIPASSO ══ -->
+  <div class="page" id="pageRipasso">
+    <div class="sec-header">
+      <button class="sec-back" onclick="showPage('home')" aria-label="Torna alla home">←</button>
+      <h2>🎯 Ripasso Generale</h2>
+    </div>
+
+    <!-- schermata START -->
+    <div id="ripassoStart" class="card" style="text-align:center;padding:28px 20px">
+      <div style="font-size:56px;margin-bottom:12px">🎯</div>
+      <h2 style="font-family:var(--font);font-weight:900;font-size:22px;margin-bottom:8px">Ripasso Generale</h2>
+      <p style="color:var(--text-light);font-family:var(--font);font-weight:600;font-size:15px;margin-bottom:20px">
+        Una sessione di domande miste su tutti gli argomenti studiati.<br>Quante domande vuoi fare?
+      </p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+        <button onclick="startRipasso(20)" style="padding:14px 24px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:17px;cursor:pointer">20 domande</button>
+        <button onclick="startRipasso(25)" style="padding:14px 24px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:17px;cursor:pointer">25 domande</button>
+        <button onclick="startRipasso(30)" style="padding:14px 24px;background:#f43f5e;color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:17px;cursor:pointer">30 domande</button>
+      </div>
+      <div id="ripassoBestBox" style="display:none;background:var(--primary-light);border-radius:12px;padding:12px 16px;font-family:var(--font)">
+        <span style="font-weight:700;font-size:14px;color:var(--primary)">🏆 Il tuo record: <span id="ripassoBest">—</span></span>
+      </div>
+    </div>
+
+    <!-- schermata QUIZ in corso -->
+    <div id="ripassoQuiz" style="display:none">
+      <div class="card" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:var(--font);font-weight:800">
+          <span id="rpProgress" style="color:var(--text-light);font-size:14px">1 / 20</span>
+          <span id="rpScore" style="color:var(--primary);font-size:15px">✅ 0</span>
+          <span id="rpTopic" style="font-size:12px;background:var(--border);border-radius:20px;padding:3px 10px;color:var(--text-light)">—</span>
+        </div>
+        <div id="rpBar" style="height:6px;background:var(--border);border-radius:3px;margin-bottom:16px">
+          <div id="rpBarFill" style="height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:3px;width:0%;transition:width 0.4s"></div>
+        </div>
+        <p id="rpQuestion" style="font-family:var(--font);font-weight:700;font-size:16px;line-height:1.5;margin-bottom:16px;min-height:60px"></p>
+        <div id="rpOpts" style="display:flex;flex-direction:column;gap:10px"></div>
+        <div id="rpHint" style="display:none;margin-top:14px;padding:12px;background:var(--accent-light);border-radius:12px;font-family:var(--font);font-weight:700;font-size:14px;color:var(--accent)"></div>
+        <button id="rpNext" onclick="rpNextQuestion()" style="display:none;margin-top:16px;width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:16px;cursor:pointer">Prossima →</button>
+      </div>
+    </div>
+
+    <!-- schermata RISULTATO -->
+    <div id="ripassoResult" style="display:none" class="card">
+      <div style="text-align:center;padding:16px 0 20px">
+        <div id="rpResultEmoji" style="font-size:60px;margin-bottom:10px">🎉</div>
+        <h2 id="rpResultTitle" style="font-family:var(--font);font-weight:900;font-size:22px;margin-bottom:6px"></h2>
+        <p id="rpResultSub" style="font-family:var(--font);font-weight:600;color:var(--text-light);font-size:15px;margin-bottom:20px"></p>
+        <div id="rpResultByTopic" style="text-align:left;margin-bottom:20px"></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button onclick="startRipasso(rpState.total)" style="padding:13px 22px;background:var(--primary);color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:15px;cursor:pointer">🔄 Rifai (stesse domande)</button>
+          <button onclick="showRipasso()" style="padding:13px 22px;background:var(--accent);color:white;border:none;border-radius:14px;font-family:var(--font);font-weight:800;font-size:15px;cursor:pointer">🆕 Nuova sessione</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- BOTTOM NAV -->
@@ -715,8 +786,8 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
   <button class="nav-item active" id="nav-home" onclick="showPage('home')" aria-label="Home">
     <span class="ni">🏠</span><span class="nl">Home</span>
   </button>
-  <button class="nav-item" id="nav-geo" onclick="showTopic('geometria')" aria-label="Geometria">
-    <span class="ni">🔷</span><span class="nl">Geometria</span>
+  <button class="nav-item" id="nav-ripasso" onclick="showRipasso()" aria-label="Ripasso">
+    <span class="ni">🎯</span><span class="nl">Ripasso</span>
   </button>
   <button class="nav-item" id="nav-stats" onclick="showPage('stats')" aria-label="Progressi">
     <span class="ni">📊</span><span class="nl">Progressi</span>
@@ -1229,8 +1300,8 @@ radicali: `
 function showPage(p) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const pages = { home:'pageHome', stats:'pageStats', settings:'pageSettings' };
-  const navs  = { home:'nav-home', stats:'nav-stats', settings:'nav-set' };
+  const pages = { home:'pageHome', stats:'pageStats', settings:'pageSettings', ripasso:'pageRipasso' };
+  const navs  = { home:'nav-home', stats:'nav-stats', settings:'nav-set', ripasso:'nav-ripasso' };
   if(pages[p]) document.getElementById(pages[p]).classList.add('active');
   if(navs[p]) document.getElementById(navs[p]).classList.add('active');
   if(p==='stats') renderStats();
@@ -1241,7 +1312,6 @@ function showTopic(name) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('pageTopicLesson').classList.add('active');
-  if(name==='geometria') document.getElementById('nav-geo').classList.add('active');
 
   const titles = {
     numeri:'± Numeri Relativi',
@@ -1677,6 +1747,203 @@ function addPoints(n) {
   state.points += n;
   document.getElementById('ptsBadge').textContent = `⭐ ${state.points} pt`;
 }
+
+// ═══════════════════════════════════════════
+// RIPASSO GENERALE
+// ═══════════════════════════════════════════
+let rpState = {};
+
+function showRipasso() {
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('pageRipasso').classList.add('active');
+  document.getElementById('nav-ripasso').classList.add('active');
+  // Mostra start screen
+  document.getElementById('ripassoStart').style.display='';
+  document.getElementById('ripassoQuiz').style.display='none';
+  document.getElementById('ripassoResult').style.display='none';
+  // Mostra record se esiste
+  const best = localStorage.getItem('rpBest');
+  if(best) {
+    const b = JSON.parse(best);
+    document.getElementById('ripassoBest').textContent = `${b.correct}/${b.total} (${Math.round(b.correct/b.total*100)}%)`;
+    document.getElementById('ripassoBestBox').style.display='';
+  }
+  window.scrollTo(0,0);
+}
+
+function startRipasso(n) {
+  // Costruisci pool mescolando tutti i quiz
+  const topicLabels = {
+    numeri:'± Numeri', frazioni:'½ Frazioni', geometria:'🔷 Geometria',
+    pitagora:'📐 Pitagora', algebra:'🔤 Algebra', statistica:'📊 Statistica', radicali:'√ Radicali'
+  };
+  let pool = [];
+  for(const [topic, qs] of Object.entries(QUIZZES)) {
+    qs.forEach(q => pool.push({...q, _topic: topic, _topicLabel: topicLabels[topic]||topic}));
+  }
+  // Fisher-Yates shuffle
+  for(let i=pool.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]]=[pool[j],pool[i]];
+  }
+  // Prendi n domande, garantendo varietà di argomenti (max 6 per argomento)
+  const selected = [];
+  const topicCount = {};
+  const maxPerTopic = Math.ceil(n / Object.keys(QUIZZES).length) + 1;
+  for(const q of pool) {
+    if(selected.length >= n) break;
+    const t = q._topic;
+    if((topicCount[t]||0) < maxPerTopic) {
+      selected.push(q);
+      topicCount[t] = (topicCount[t]||0)+1;
+    }
+  }
+  // Se non abbastanza (per via del cap), aggiungine altri
+  if(selected.length < n) {
+    for(const q of pool) {
+      if(selected.length >= n) break;
+      if(!selected.includes(q)) selected.push(q);
+    }
+  }
+
+  rpState = {
+    questions: selected,
+    total: selected.length,
+    current: 0,
+    correct: 0,
+    answered: false,
+    topicResults: {}
+  };
+
+  document.getElementById('ripassoStart').style.display='none';
+  document.getElementById('ripassoQuiz').style.display='';
+  document.getElementById('ripassoResult').style.display='none';
+  rpRenderQuestion();
+}
+
+function rpRenderQuestion() {
+  const { questions, current, total, correct } = rpState;
+  const q = questions[current];
+
+  document.getElementById('rpProgress').textContent = `${current+1} / ${total}`;
+  document.getElementById('rpScore').textContent = `✅ ${correct}`;
+  document.getElementById('rpTopic').textContent = q._topicLabel;
+  document.getElementById('rpBarFill').style.width = `${(current/total)*100}%`;
+  document.getElementById('rpQuestion').textContent = q.q;
+  document.getElementById('rpHint').style.display='none';
+  document.getElementById('rpNext').style.display='none';
+  rpState.answered = false;
+
+  // Shuffle opts
+  const opts = [...q.opts];
+  for(let i=opts.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [opts[i],opts[j]]=[opts[j],opts[i]];
+  }
+
+  const container = document.getElementById('rpOpts');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.style.cssText = 'width:100%;padding:13px 16px;background:white;border:2px solid var(--border);border-radius:12px;font-family:var(--font);font-weight:700;font-size:15px;cursor:pointer;text-align:left;transition:all 0.2s';
+    btn.onclick = () => rpAnswer(opt, btn, q);
+    container.appendChild(btn);
+  });
+}
+
+function rpAnswer(chosen, btn, q) {
+  if(rpState.answered) return;
+  rpState.answered = true;
+  const correct = chosen === q.ans;
+
+  // Update topic results
+  const t = q._topic;
+  if(!rpState.topicResults[t]) rpState.topicResults[t]={done:0,correct:0,label:q._topicLabel};
+  rpState.topicResults[t].done++;
+  if(correct) { rpState.topicResults[t].correct++; rpState.correct++; }
+
+  // Style all buttons
+  document.querySelectorAll('#rpOpts button').forEach(b => {
+    b.disabled = true;
+    if(b.textContent === q.ans) {
+      b.style.background='#dcfce7'; b.style.borderColor='#22c55e'; b.style.color='#166534';
+    } else if(b === btn && !correct) {
+      b.style.background='#fee2e2'; b.style.borderColor='#ef4444'; b.style.color='#991b1b';
+    }
+  });
+
+  // Show hint
+  if(q.hint) {
+    const h = document.getElementById('rpHint');
+    h.textContent = '💡 ' + q.hint;
+    h.style.display='';
+  }
+
+  // Update score display
+  document.getElementById('rpScore').textContent = `✅ ${rpState.correct}`;
+
+  // Show next or finish
+  const nextBtn = document.getElementById('rpNext');
+  nextBtn.style.display='';
+  const isLast = rpState.current >= rpState.total - 1;
+  nextBtn.textContent = isLast ? '📊 Vedi risultato' : 'Prossima →';
+}
+
+function rpNextQuestion() {
+  rpState.current++;
+  if(rpState.current >= rpState.total) {
+    rpShowResult();
+  } else {
+    rpRenderQuestion();
+  }
+}
+
+function rpShowResult() {
+  document.getElementById('ripassoQuiz').style.display='none';
+  document.getElementById('ripassoResult').style.display='';
+
+  const { correct, total, topicResults } = rpState;
+  const pct = Math.round(correct/total*100);
+
+  let emoji='🎉', title='', sub='';
+  if(pct>=90){ emoji='🏆'; title='Eccezionale!'; sub='Sei davvero preparato su tutto. Ottimo lavoro!'; }
+  else if(pct>=75){ emoji='😄'; title='Molto bene!'; sub='Risultato ottimo. Qualche piccola lacuna da ripassare.'; }
+  else if(pct>=60){ emoji='👍'; title='Bene!'; sub='Buona base. Ripassare gli argomenti dove hai sbagliato.'; }
+  else if(pct>=40){ emoji='📚'; title='Continua a studiare'; sub='Ci sono argomenti da rivedere. Non mollare!'; }
+  else { emoji='💪'; title='Tanta strada da fare'; sub='Riparti dalle lezioni degli argomenti più difficili.'; }
+
+  document.getElementById('rpResultEmoji').textContent=emoji;
+  document.getElementById('rpResultTitle').textContent=`${title} — ${correct}/${total} (${pct}%)`;
+  document.getElementById('rpResultSub').textContent=sub;
+
+  // Breakdown by topic
+  let html2='';
+  for(const [,tr] of Object.entries(topicResults)) {
+    const tp = Math.round(tr.correct/tr.done*100);
+    const col = tp>=75?'#22c55e':tp>=50?'#f59e0b':'#ef4444';
+    html2+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;font-family:var(--font)">
+      <span style="font-weight:800;font-size:13px;min-width:110px">${tr.label}</span>
+      <div style="flex:1;height:10px;background:var(--border);border-radius:5px;overflow:hidden">
+        <div style="height:100%;background:${col};border-radius:5px;width:${tp}%;transition:width 0.5s"></div>
+      </div>
+      <span style="font-weight:800;font-size:13px;color:${col};min-width:40px;text-align:right">${tr.correct}/${tr.done}</span>
+    </div>`;
+  }
+  document.getElementById('rpResultByTopic').innerHTML=html2;
+
+  // Salva record
+  try {
+    const best = JSON.parse(localStorage.getItem('rpBest')||'null');
+    if(!best || pct > Math.round(best.correct/best.total*100)) {
+      localStorage.setItem('rpBest', JSON.stringify({correct,total}));
+    }
+  } catch(e){}
+
+  window.scrollTo(0,0);
+}
+
 function updateHome() {
   const tots = {numeri:10,frazioni:10,geometria:22,pitagora:10,algebra:10,statistica:10,radicali:15};
   Object.keys(tots).forEach(k=>{
