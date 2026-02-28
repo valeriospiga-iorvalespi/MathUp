@@ -605,7 +605,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
       <div class="topic-card" onclick="showTopic('geometria')" style="border-color:#3b82f622" id="tc-geometria">
         <div class="tc-icon">🔷</div>
         <div class="tc-name">Geometria & Aree</div>
-        <div class="tc-count" id="cnt-geometria">15 esercizi</div>
+        <div class="tc-count" id="cnt-geometria">22 esercizi</div>
         <div class="tc-bar"><div class="tc-fill" id="fill-geometria" style="width:0%;background:#3b82f6"></div></div>
       </div>
       <div class="topic-card" onclick="showTopic('pitagora')" style="border-color:#8b5cf622" id="tc-pitagora">
@@ -974,6 +974,8 @@ geometria: `
     <div class="pill" onclick="showGeomShape(this,'para')">⬧ Parallelogramma</div>
     <div class="pill" onclick="showGeomShape(this,'trap')">⌂ Trapezio</div>
     <div class="pill" onclick="showGeomShape(this,'sq')">■ Quadrato</div>
+    <div class="pill" onclick="showGeomShape(this,'rombo')">◇ Rombo</div>
+    <div class="pill" onclick="showGeomShape(this,'cerchio')">⭕ Cerchio</div>
   </div>
   <div id="geomShape"></div>
   <div class="vb vb-purple" style="margin-top:16px">
@@ -1230,70 +1232,161 @@ function updateFrac() {
 
 // Geometry shape display
 const GEOM_SHAPES = {
-  rect:{ name:'Rettangolo', formula:'A = base × altezza', inv:'base = A ÷ h &nbsp;|&nbsp; h = A ÷ base', color:'#3b82f6', vars:['base','altezza'],
-    calc:(a,b)=>a*b,
-    draw:(ctx,a,b,sc)=>{
-      ctx.fillStyle='rgba(59,130,246,0.12)'; ctx.fillRect(40,40,a*sc,b*sc);
-      ctx.strokeStyle='#3b82f6'; ctx.lineWidth=3; ctx.strokeRect(40,40,a*sc,b*sc);
-      ctx.fillStyle='#3b82f6'; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center';
-      ctx.fillText('b='+a, 40+a*sc/2, 40+b*sc+22);
-      ctx.textAlign='right'; ctx.fillText('h='+b, 36, 40+b*sc/2+6);
+  // ─── Helper: compute adaptive scale so figure always fits in canvas ───
+  // PAD_TOP=30, PAD_BOT=28 (label), PAD_LEFT=44, PAD_RIGHT=14
+  // maxW = 280-44-14=222, maxH = 240-30-28=182  (canvas is 280×240)
+
+  rect:{ name:'Rettangolo',
+    formula:'A = b × h &nbsp;&nbsp; P = 2(b+h)',
+    inv:'b = A ÷ h  |  h = A ÷ b  |  b = P/2 − h',
+    color:'#3b82f6', vars:['base (b)','altezza (h)'],
+    calc:(a,b)=>({a:a*b, p:2*(a+b)}),
+    draw:(ctx,a,b)=>{
+      const sc=Math.min(222/a, 182/b);
+      const ox=44, oy=30;
+      ctx.fillStyle='rgba(59,130,246,0.13)'; ctx.fillRect(ox,oy,a*sc,b*sc);
+      ctx.strokeStyle='#3b82f6'; ctx.lineWidth=3; ctx.strokeRect(ox,oy,a*sc,b*sc);
+      ctx.fillStyle='#3b82f6'; ctx.font='bold 14px Nunito,sans-serif';
+      ctx.textAlign='center'; ctx.fillText('b='+a, ox+a*sc/2, oy+b*sc+20);
+      ctx.textAlign='right';   ctx.fillText('h='+b, ox-6, oy+b*sc/2+5);
     }},
-  tri:{ name:'Triangolo', formula:'A = (base × altezza) ÷ 2', inv:'base = (2×A) ÷ h &nbsp;|&nbsp; h = (2×A) ÷ base', color:'#ef4444', vars:['base','altezza'],
-    calc:(a,b)=>a*b/2,
-    draw:(ctx,a,b,sc)=>{
-      ctx.beginPath(); ctx.moveTo(40+a*sc/2,30); ctx.lineTo(40,30+b*sc); ctx.lineTo(40+a*sc,30+b*sc); ctx.closePath();
+
+  tri:{ name:'Triangolo',
+    formula:'A = (b × h) ÷ 2 &nbsp;&nbsp; P = somma lati',
+    inv:'b = (2×A) ÷ h  |  h = (2×A) ÷ b',
+    color:'#ef4444', vars:['base (b)','altezza (h)'],
+    calc:(a,b)=>({a:a*b/2, p:null}),
+    draw:(ctx,a,b)=>{
+      const sc=Math.min(222/a, 182/b);
+      const ox=44, oy=30;
+      ctx.beginPath(); ctx.moveTo(ox+a*sc/2,oy); ctx.lineTo(ox,oy+b*sc); ctx.lineTo(ox+a*sc,oy+b*sc); ctx.closePath();
       ctx.fillStyle='rgba(239,68,68,0.12)'; ctx.fill();
       ctx.strokeStyle='#ef4444'; ctx.lineWidth=3; ctx.stroke();
-      ctx.setLineDash([5,4]); ctx.strokeStyle='#aaa'; ctx.beginPath();
-      ctx.moveTo(40+a*sc/2,30); ctx.lineTo(40+a*sc/2,30+b*sc); ctx.stroke(); ctx.setLineDash([]);
+      ctx.setLineDash([5,4]); ctx.strokeStyle='#bbb'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(ox+a*sc/2,oy); ctx.lineTo(ox+a*sc/2,oy+b*sc); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#ef4444'; ctx.font='bold 14px Nunito,sans-serif';
+      ctx.textAlign='center'; ctx.fillText('b='+a, ox+a*sc/2, oy+b*sc+20);
+      ctx.textAlign='right';   ctx.fillText('h='+b, ox+a*sc/2-4, oy+b*sc/2+5);
     }},
-  para:{ name:'Parallelogramma', formula:'A = base × altezza', inv:'base = A ÷ h &nbsp;|&nbsp; h = A ÷ base', color:'#8b5cf6', vars:['base','altezza'],
-    calc:(a,b)=>a*b,
-    draw:(ctx,a,b,sc)=>{
-      const off=25;
-      ctx.beginPath(); ctx.moveTo(40+off,30); ctx.lineTo(40+off+a*sc,30); ctx.lineTo(40+a*sc,30+b*sc); ctx.lineTo(40,30+b*sc); ctx.closePath();
+
+  para:{ name:'Parallelogramma',
+    formula:'A = b × h &nbsp;&nbsp; P = 2(b+l)',
+    inv:'b = A ÷ h  |  h = A ÷ b',
+    color:'#8b5cf6', vars:['base (b)','altezza (h)'],
+    calc:(a,b)=>({a:a*b, p:null}),
+    draw:(ctx,a,b)=>{
+      const sc=Math.min(200/(a+1), 182/b);
+      const off=Math.min(20, sc);
+      const ox=44, oy=30;
+      ctx.beginPath(); ctx.moveTo(ox+off,oy); ctx.lineTo(ox+off+a*sc,oy); ctx.lineTo(ox+a*sc,oy+b*sc); ctx.lineTo(ox,oy+b*sc); ctx.closePath();
       ctx.fillStyle='rgba(139,92,246,0.12)'; ctx.fill();
       ctx.strokeStyle='#8b5cf6'; ctx.lineWidth=3; ctx.stroke();
+      ctx.fillStyle='#8b5cf6'; ctx.font='bold 14px Nunito,sans-serif';
+      ctx.textAlign='center'; ctx.fillText('b='+a, ox+off+a*sc/2, oy+b*sc+20);
+      ctx.textAlign='right';   ctx.fillText('h='+b, ox-4, oy+b*sc/2+5);
     }},
-  trap:{ name:'Trapezio', formula:'A = (B + b) × h ÷ 2', inv:'B = (2×A ÷ h) − b', color:'#22c55e', vars:['base magg. (B)','altezza'],
-    calc:(B,h)=>(B+Math.round(B*0.6))*h/2,
-    draw:(ctx,B,h,sc)=>{
-      const b=Math.round(B*0.6), off=(B-b)*sc/2;
-      ctx.beginPath(); ctx.moveTo(40+off,30); ctx.lineTo(40+off+b*sc,30); ctx.lineTo(40+B*sc,30+h*sc); ctx.lineTo(40,30+h*sc); ctx.closePath();
+
+  trap:{ name:'Trapezio',
+    formula:'A = (B+b)×h ÷ 2 &nbsp;&nbsp; P = B+b+l₁+l₂',
+    inv:'B = (2×A÷h) − b',
+    color:'#22c55e', vars:['base magg. (B)','altezza (h)'],
+    calc:(B,h)=>{const b=Math.round(B*0.6); return {a:(B+b)*h/2, p:null};},
+    draw:(ctx,B,h)=>{
+      const b=Math.round(B*0.6);
+      const sc=Math.min(222/B, 182/h);
+      const off=(B-b)*sc/2, ox=44, oy=30;
+      ctx.beginPath(); ctx.moveTo(ox+off,oy); ctx.lineTo(ox+off+b*sc,oy); ctx.lineTo(ox+B*sc,oy+h*sc); ctx.lineTo(ox,oy+h*sc); ctx.closePath();
       ctx.fillStyle='rgba(34,197,94,0.12)'; ctx.fill();
       ctx.strokeStyle='#22c55e'; ctx.lineWidth=3; ctx.stroke();
-      ctx.fillStyle='#22c55e'; ctx.font='bold 13px Nunito,sans-serif'; ctx.textAlign='center';
-      ctx.fillText('B='+B, 40+B*sc/2, 30+h*sc+22);
-      ctx.fillText('b≈'+b, 40+off+b*sc/2, 22);
+      ctx.fillStyle='#22c55e'; ctx.font='bold 13px Nunito,sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText('B='+B, ox+B*sc/2, oy+h*sc+20);
+      ctx.fillText('b≈'+b, ox+off+b*sc/2, oy-8);
+      ctx.textAlign='right'; ctx.fillText('h='+h, ox-4, oy+h*sc/2+5);
     }},
-  sq:{ name:'Quadrato', formula:'A = lato²', inv:'lato = √A', color:'#f59e0b', vars:['lato','lato'],
-    calc:(a)=>a*a,
-    draw:(ctx,a,_,sc)=>{
-      ctx.fillStyle='rgba(245,158,11,0.12)'; ctx.fillRect(40,40,a*sc,a*sc);
-      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3; ctx.strokeRect(40,40,a*sc,a*sc);
-      ctx.fillStyle='#f59e0b'; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center';
-      ctx.fillText('l='+a, 40+a*sc/2, 40+a*sc+22);
+
+  sq:{ name:'Quadrato',
+    formula:'A = l² &nbsp;&nbsp; P = 4l',
+    inv:'l = √A  |  l = P ÷ 4',
+    color:'#f59e0b', vars:['lato (l)','lato (l)'],
+    calc:(a)=>({a:a*a, p:4*a}),
+    draw:(ctx,a)=>{
+      const sc=Math.min(182/a, 182/a);
+      const ox=44, oy=30;
+      ctx.fillStyle='rgba(245,158,11,0.12)'; ctx.fillRect(ox,oy,a*sc,a*sc);
+      ctx.strokeStyle='#f59e0b'; ctx.lineWidth=3; ctx.strokeRect(ox,oy,a*sc,a*sc);
+      ctx.fillStyle='#f59e0b'; ctx.font='bold 14px Nunito,sans-serif';
+      ctx.textAlign='center'; ctx.fillText('l='+a, ox+a*sc/2, oy+a*sc+20);
+      ctx.textAlign='right';   ctx.fillText('l='+a, ox-4, oy+a*sc/2+5);
+    }},
+
+  rombo:{ name:'Rombo',
+    formula:'A = (d₁ × d₂) ÷ 2 &nbsp;&nbsp; P = 4l',
+    inv:'d₁ = (2×A) ÷ d₂  |  d₂ = (2×A) ÷ d₁',
+    color:'#f43f5e', vars:['diagonale d₁','diagonale d₂'],
+    calc:(d1,d2)=>({a:d1*d2/2, p:null}),
+    draw:(ctx,d1,d2)=>{
+      const sc=Math.min(200/d1, 150/d2);
+      const cx=44+d1*sc/2, cy=30+d2*sc/2;
+      ctx.beginPath();
+      ctx.moveTo(cx, 30);
+      ctx.lineTo(44+d1*sc, cy);
+      ctx.lineTo(cx, 30+d2*sc);
+      ctx.lineTo(44, cy);
+      ctx.closePath();
+      ctx.fillStyle='rgba(244,63,94,0.12)'; ctx.fill();
+      ctx.strokeStyle='#f43f5e'; ctx.lineWidth=3; ctx.stroke();
+      // diagonals dashed
+      ctx.setLineDash([4,3]); ctx.strokeStyle='#f43f5eaa'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(44,cy); ctx.lineTo(44+d1*sc,cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,30); ctx.lineTo(cx,30+d2*sc); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#f43f5e'; ctx.font='bold 13px Nunito,sans-serif';
+      ctx.textAlign='center'; ctx.fillText('d₁='+d1, cx, 30+d2*sc+20);
+      ctx.textAlign='left';   ctx.fillText('d₂='+d2, cx+4, cy-4);
+    }},
+
+  cerchio:{ name:'Cerchio',
+    formula:'A = π × r² &nbsp;&nbsp; C = 2πr',
+    inv:'r = √(A÷π)  |  r = C÷(2π)',
+    color:'#06b6d4', vars:['raggio (r)','raggio (r)'],
+    calc:(r)=>({a:Math.PI*r*r, p:2*Math.PI*r}),
+    draw:(ctx,r)=>{
+      const sc=Math.min(100/r, 100/r);
+      const cx=44+r*sc+10, cy=30+r*sc+10;
+      ctx.beginPath(); ctx.arc(cx,cy,r*sc,0,Math.PI*2);
+      ctx.fillStyle='rgba(6,182,212,0.12)'; ctx.fill();
+      ctx.strokeStyle='#06b6d4'; ctx.lineWidth=3; ctx.stroke();
+      // radius line
+      ctx.strokeStyle='#06b6d4aa'; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+r*sc,cy); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#06b6d4'; ctx.font='bold 13px Nunito,sans-serif';
+      ctx.textAlign='left'; ctx.fillText('r='+r, cx+r*sc/2, cy-6);
+      ctx.textAlign='center'; ctx.fillText('⊙', cx, cy+5);
     }},
 };
+
 let gState = {key:'rect', v1:5, v2:4};
 function showGeomShape(pillEl, key) {
   document.querySelectorAll('#geomPills .pill').forEach(p=>p.classList.remove('active'));
   if(pillEl) pillEl.classList.add('active');
   gState.key=key;
   const s=GEOM_SHAPES[key];
+  const isSingle = (key==='sq'||key==='cerchio');
   const html = `
     <div class="vb vb-blue">
       <h3>${s.name}</h3>
-      <div style="text-align:center;margin:10px 0"><span class="formula formula-blue" style="font-size:16px;padding:10px 20px">${s.formula}</span></div>
+      <div style="text-align:center;margin:10px 0"><span class="formula formula-blue" style="font-size:15px;padding:10px 18px">${s.formula}</span></div>
       <div style="font-size:13px;color:var(--purple);font-family:var(--font);font-weight:700;margin-bottom:14px;text-align:center">🔁 Inversa: ${s.inv}</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-        <canvas id="geomCanvas" width="280" height="200" style="flex-shrink:0;max-width:100%"></canvas>
+        <canvas id="geomCanvas" width="280" height="240" style="flex-shrink:0;max-width:100%;border-radius:14px;background:white;border:2px solid var(--border)"></canvas>
         <div style="flex:1;min-width:130px">
           <div class="slider-row"><label>${s.vars[0]}: <strong id="gv1">${gState.v1}</strong></label>
             <input type="range" min="2" max="8" value="${gState.v1}" oninput="gState.v1=+this.value;document.getElementById('gv1').textContent=this.value;drawGeom()" style="accent-color:${s.color}">
           </div>
-          ${key!=='sq'?`<div class="slider-row"><label>${s.vars[1]}: <strong id="gv2">${gState.v2}</strong></label>
+          ${!isSingle?`<div class="slider-row"><label>${s.vars[1]}: <strong id="gv2">${gState.v2}</strong></label>
             <input type="range" min="2" max="8" value="${gState.v2}" oninput="gState.v2=+this.value;document.getElementById('gv2').textContent=this.value;drawGeom()" style="accent-color:${s.color}"></div>`:''}
           <div class="geom-result" id="geomResult">A = …</div>
         </div>
@@ -1307,10 +1400,15 @@ function drawGeom() {
   const c=document.getElementById('geomCanvas');
   if(!c) return;
   const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,280,200);
-  s.draw(ctx, gState.v1, gState.v2, 26);
-  const area = s.calc(gState.v1, gState.v2);
-  document.getElementById('geomResult').innerHTML = `Area = ${area.toFixed(1)} cm²`;
+  ctx.clearRect(0,0,280,240);
+  s.draw(ctx, gState.v1, gState.v2);
+  const res = s.calc(gState.v1, gState.v2);
+  const area = typeof res === 'object' ? res.a : res;
+  const perim = typeof res === 'object' ? res.p : null;
+  let txt = `Area = ${area.toFixed(2)} cm²`;
+  if(perim) txt += ` &nbsp;|&nbsp; P = ${perim.toFixed(1)} cm`;
+  if(gState.key==='cerchio') txt = `A = ${area.toFixed(2)} cm² &nbsp;|&nbsp; C = ${(2*Math.PI*gState.v1).toFixed(2)} cm`;
+  document.getElementById('geomResult').innerHTML = txt;
 }
 
 // Pitagora canvas
@@ -1403,7 +1501,7 @@ function addPoints(n) {
   document.getElementById('ptsBadge').textContent = `⭐ ${state.points} pt`;
 }
 function updateHome() {
-  const tots = {numeri:10,frazioni:10,geometria:15,pitagora:10,algebra:10,statistica:10};
+  const tots = {numeri:10,frazioni:10,geometria:22,pitagora:10,algebra:10,statistica:10};
   Object.keys(tots).forEach(k=>{
     const p=state.progress[k];
     const fill=document.getElementById('fill-'+k);
@@ -1492,20 +1590,21 @@ function ci(v) {
 // ═══════════════════════════════════════════
 (function(){
   const defs=[
-    {icon:'▭',name:'Rettangolo',f:'A = b × h',inv:'b = A÷h &nbsp; h = A÷b &nbsp; P = 2(b+h)'},
-    {icon:'■',name:'Quadrato',f:'A = l²',inv:'l = √A &nbsp; P = 4l'},
-    {icon:'△',name:'Triangolo',f:'A = (b × h) ÷ 2',inv:'b = 2A÷h &nbsp; h = 2A÷b'},
-    {icon:'⬧',name:'Parallelogramma',f:'A = b × h',inv:'b = A÷h &nbsp; h = A÷b'},
-    {icon:'⌂',name:'Trapezio',f:'A = (B+b) × h ÷ 2',inv:'B = (2A÷h) − b'},
-    {icon:'⭕',name:'Cerchio',f:'A = π × r²',inv:'r = √(A÷π) &nbsp; C = 2πr'},
-    {icon:'📐',name:'Pitagora',f:'a² + b² = c²',inv:'b = √(c²−a²)'},
+    {icon:'▭',name:'Rettangolo',    f:'A = b×h',          p:'P = 2(b+h)',   inv:'b = A÷h | h = A÷b | b = P/2−h'},
+    {icon:'■',name:'Quadrato',      f:'A = l²',           p:'P = 4l',       inv:'l = √A | l = P÷4'},
+    {icon:'△',name:'Triangolo',     f:'A = (b×h) ÷ 2',   p:'P = a+b+c',    inv:'b = 2A÷h | h = 2A÷b'},
+    {icon:'⬧',name:'Parallelogramma',f:'A = b×h',         p:'P = 2(b+l)',   inv:'b = A÷h | h = A÷b'},
+    {icon:'⌂',name:'Trapezio',      f:'A = (B+b)×h ÷ 2', p:'P = B+b+l₁+l₂',inv:'B = (2A÷h)−b'},
+    {icon:'◇',name:'Rombo',         f:'A = (d₁×d₂) ÷ 2', p:'P = 4l',       inv:'d₁ = 2A÷d₂ | d₂ = 2A÷d₁'},
+    {icon:'⭕',name:'Cerchio',       f:'A = π×r²',         p:'C = 2πr',      inv:'r = √(A÷π) | r = C÷(2π)'},
+    {icon:'📐',name:'Pitagora',      f:'a²+b²=c²',         p:'—',            inv:'b = √(c²−a²)'},
   ];
   document.getElementById('formuleList').innerHTML=defs.map(d=>`
     <div class="form-row">
       <div class="form-icon">${d.icon}</div>
       <div class="form-content">
         <div class="name">${d.name}</div>
-        <div class="f">${d.f}</div>
+        <div class="f">${d.f} &nbsp;<span style="color:var(--accent);font-size:13px">${d.p}</span></div>
         <div class="inv">↩ ${d.inv}</div>
       </div>
     </div>`).join('');
