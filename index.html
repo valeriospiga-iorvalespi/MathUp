@@ -578,6 +578,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
   <button class="tool-chip" onclick="openModal('mPita')">✖️ Tav. Pitagorica</button>
   <button class="tool-chip" onclick="openModal('mForm')">📐 Formule</button>
   <button class="tool-chip" onclick="openModal('mReg')">± Regole Segni</button>
+  <button class="tool-chip" onclick="openModal('mTav')">🔢 Tavole Numeriche</button>
 </div>
 
 <!-- MAIN -->
@@ -625,6 +626,12 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
         <div class="tc-name">Statistica</div>
         <div class="tc-count" id="cnt-statistica">10 esercizi</div>
         <div class="tc-bar"><div class="tc-fill" id="fill-statistica" style="width:0%;background:#f59e0b"></div></div>
+      </div>
+      <div class="topic-card" onclick="showTopic('radicali')" style="border-color:#06b6d422" id="tc-radicali">
+        <div class="tc-icon">√</div>
+        <div class="tc-name">Potenze & Radicali</div>
+        <div class="tc-count" id="cnt-radicali">15 esercizi</div>
+        <div class="tc-bar"><div class="tc-fill" id="fill-radicali" style="width:0%;background:#06b6d4"></div></div>
       </div>
     </div>
     <div class="author-tag">Creato da <strong>Valerio Spiga</strong> · MathUp v1.0 · DSA Friendly 🧡</div>
@@ -717,6 +724,38 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
   <button class="install-x" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
 </div>
 
+<!-- TAVOLE NUMERICHE MODAL -->
+<div class="overlay" id="mTav" onclick="if(event.target===this)closeModal('mTav')">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-handle"></div>
+    <h3>🔢 Tavole Numeriche (1–1000)</h3>
+    <div style="font-family:var(--font);margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <label style="font-weight:700;font-size:14px">Da:</label>
+      <input id="tavFrom" type="number" min="1" max="999" value="1"
+        style="width:70px;padding:6px;border-radius:8px;border:2px solid var(--border);font-family:var(--font);font-weight:700;font-size:14px">
+      <label style="font-weight:700;font-size:14px">A:</label>
+      <input id="tavTo" type="number" min="2" max="1000" value="20"
+        style="width:70px;padding:6px;border-radius:8px;border:2px solid var(--border);font-family:var(--font);font-weight:700;font-size:14px">
+      <button onclick="renderTavole()" style="padding:7px 16px;background:var(--primary);color:white;border:none;border-radius:10px;font-family:var(--font);font-weight:800;font-size:14px;cursor:pointer">Mostra</button>
+    </div>
+    <div style="overflow-x:auto;max-height:55vh;overflow-y:auto;border-radius:12px;border:2px solid var(--border)">
+      <table id="tavTable" style="border-collapse:collapse;width:100%;font-family:var(--font);font-size:13px">
+        <thead>
+          <tr style="background:var(--primary);color:white;position:sticky;top:0">
+            <th style="padding:8px 10px;text-align:right">n</th>
+            <th style="padding:8px 10px;text-align:right">n²</th>
+            <th style="padding:8px 10px;text-align:right">n³</th>
+            <th style="padding:8px 10px;text-align:right">√n</th>
+            <th style="padding:8px 10px;text-align:right">∛n</th>
+          </tr>
+        </thead>
+        <tbody id="tavBody"></tbody>
+      </table>
+    </div>
+    <button class="modal-close" onclick="closeModal('mTav')">✓ Chiudi</button>
+  </div>
+</div>
+
 <!-- iOS INSTALL GUIDE MODAL -->
 <div class="overlay" id="mIos" onclick="if(event.target===this)closeModal('mIos')">
   <div class="modal">
@@ -758,7 +797,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
       <div class="calc-grid">
         <button class="cb clr" onclick="ci('C')">C</button>
         <button class="cb op" onclick="ci('±')">±</button>
-        <button class="cb op" onclick="ci('%')">%</button>
+        <button class="cb op" onclick="ci('√')" style="font-size:18px">√</button>
         <button class="cb op" onclick="ci('÷')">÷</button>
         <button class="cb" onclick="ci('7')">7</button><button class="cb" onclick="ci('8')">8</button>
         <button class="cb" onclick="ci('9')">9</button><button class="cb op" onclick="ci('×')">×</button>
@@ -768,7 +807,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
         <button class="cb" onclick="ci('3')">3</button><button class="cb op" onclick="ci('+')">+</button>
         <button class="cb z" onclick="ci('0')">0</button>
         <button class="cb" onclick="ci('.')">.</button>
-        <button class="cb eq" onclick="ci('=')">=</button>
+        <button class="cb eq" onclick="ci('=')">= </button>
       </div>
     </div>
     <button class="modal-close" onclick="closeModal('mCalc')">✓ Chiudi</button>
@@ -820,7 +859,7 @@ const state = {
   topic: null,
   quizIdx: 0,
   quizAnswered: false,
-  progress: { numeri:{done:0,correct:0}, frazioni:{done:0,correct:0}, geometria:{done:0,correct:0}, pitagora:{done:0,correct:0}, algebra:{done:0,correct:0}, statistica:{done:0,correct:0} }
+  progress: { numeri:{done:0,correct:0}, frazioni:{done:0,correct:0}, geometria:{done:0,correct:0}, pitagora:{done:0,correct:0}, algebra:{done:0,correct:0}, statistica:{done:0,correct:0}, radicali:{done:0,correct:0} }
 };
 let installPrompt = null;
 
@@ -915,6 +954,28 @@ statistica: [
   { q:'Ordina per trovare la mediana di: 5, 1, 9, 3, 7', opts:['5','3','1','7'], ans:'5', hint:'Ordinati: 1,3,5,7,9. Il valore di mezzo (3°) è 5.' },
   { q:'Se aggiungessi il dato 100 a {2,3,4,5,6}, la MEDIA…', opts:['non cambia','sale molto','scende','rimane circa uguale'], ans:'sale molto', hint:'100 è molto più grande degli altri, alza la media di molto.' },
   { q:'La MEDIANA è più "robusta" della media perché:', opts:['è sempre più grande','non è influenzata dai valori estremi','è più facile da calcolare','è uguale alla moda'], ans:'non è influenzata dai valori estremi', hint:'Anche se c\'è un dato abnorme, la mediana non cambia tanto.' },
+],
+
+radicali: [
+  // ── POTENZE ──
+  { q:'Quanto vale 3² (3 alla seconda)?', opts:['6','9','8','27'], ans:'9', hint:'3² = 3×3 = 9. Moltiplica la base per se stessa tante volte quant\'è l\'esponente.' },
+  { q:'Quanto vale 2⁵?', opts:['10','16','32','64'], ans:'32', hint:'2⁵ = 2×2×2×2×2 = 4×4×2 = 32.' },
+  { q:'Quanto vale 10³?', opts:['30','100','1000','10000'], ans:'1000', hint:'10³ = 10×10×10 = 1000. Le potenze di 10 aggiungono tanti zeri quanto l\'esponente!' },
+  { q:'Quanto vale 4⁰?', opts:['0','4','1','Impossibile'], ans:'1', hint:'Qualsiasi numero (≠0) elevato a 0 vale SEMPRE 1. Regola fondamentale!' },
+  { q:'Quanto vale 2⁻³?', opts:['−8','−6','1/8','1/6'], ans:'1/8', hint:'Esponente negativo = inverso: 2⁻³ = 1/2³ = 1/8.' },
+  // ── PROPRIETÀ POTENZE ──
+  { q:'Prodotto di potenze stessa base: 2³ × 2⁴ = ?', opts:['2⁷','4⁷','2¹²','4¹²'], ans:'2⁷', hint:'Stessa base? Si SOMMANO gli esponenti: 2³×2⁴ = 2^(3+4) = 2⁷.' },
+  { q:'Quoziente di potenze stessa base: 5⁶ ÷ 5² = ?', opts:['5⁴','5³','5⁸','1⁴'], ans:'5⁴', hint:'Stessa base? Si SOTTRAGGONO gli esponenti: 5^(6−2) = 5⁴.' },
+  { q:'Potenza di potenza: (3²)⁴ = ?', opts:['3⁶','3⁸','3²','9⁴'], ans:'3⁸', hint:'Gli esponenti si MOLTIPLICANO: (3²)⁴ = 3^(2×4) = 3⁸.' },
+  // ── RADICALI ──
+  { q:'Quanto vale √81?', opts:['9','8','7','6'], ans:'9', hint:'√81 = 9 perché 9×9 = 81. Usa la tavola dei quadrati!' },
+  { q:'Quanto vale √144?', opts:['14','11','12','13'], ans:'12', hint:'12×12 = 144 → √144 = 12.' },
+  { q:'Quanto vale ∛27 (radice cubica)?', opts:['3','9','6','4'], ans:'3', hint:'∛27 = 3 perché 3×3×3 = 27.' },
+  { q:'Quanto vale ∛125?', opts:['5','25','15','10'], ans:'5', hint:'5³ = 5×5×5 = 125 → ∛125 = 5.' },
+  // ── PROPRIETÀ RADICALI ──
+  { q:'Semplifica: √(4 × 9) = ?', opts:['√13','2√9','√36 = 6','√4 + √9'], ans:'√36 = 6', hint:'√(a×b) = √a × √b → √36 = 6. Oppure calcola direttamente: √36=6.' },
+  { q:'Semplifica: √50 = ?', opts:['5√2','25√2','5√10','10√5'], ans:'5√2', hint:'50 = 25×2 → √50 = √25 × √2 = 5√2. Porta fuori il quadrato perfetto!' },
+  { q:'Qual è la relazione corretta tra potenze e radici?', opts:['√a = a^(1/3)','√a = a^(1/2)','√a = a²','√a = a^2'], ans:'√a = a^(1/2)', hint:'La radice quadrata è uguale all\'esponente 1/2. Quindi √9 = 9^(1/2) = 3.' },
 ],
 
 };
@@ -1056,6 +1117,80 @@ statistica: `
     🔹 <strong>Moda</strong>: il valore che "vince" per frequenza</p>
   </div>
 </div>`,
+
+radicali: `
+<div class="card">
+  <h2 style="color:#06b6d4">√ Potenze &amp; Radicali</h2>
+  <p>Le <strong>potenze</strong> sono moltiplicazioni ripetute. Le <strong>radici</strong> sono l'operazione inversa. Insieme formano un sistema potentissimo per semplificare i calcoli!</p>
+
+  <div class="vb" style="background:#ecfeff;border-left:4px solid #06b6d4">
+    <h3>⚡ Potenze — la base</h3>
+    <div style="font-family:var(--font);font-size:15px;line-height:2.2">
+      <p><strong>aⁿ</strong> = a × a × a … (n volte). La <em>base</em> è a, l'<em>esponente</em> è n.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0">
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">2³ = 8<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">2×2×2</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">5² = 25<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">5×5</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">10⁴ = 10&nbsp;000<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">4 zeri!</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">7⁰ = 1<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">qualsiasi base!</span></div>
+      </div>
+      <p>⚠️ <strong>Esponente negativo:</strong> a⁻ⁿ = 1/aⁿ → 2⁻³ = 1/8</p>
+    </div>
+  </div>
+
+  <div class="vb vb-orange" style="margin-top:14px">
+    <h3>📋 Proprietà delle Potenze</h3>
+    <div style="font-family:var(--font);font-size:14px;line-height:2.4">
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Stessa base — prodotto</span><strong>aᵐ × aⁿ = a^(m+n)</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Stessa base — quoziente</span><strong>aᵐ ÷ aⁿ = a^(m−n)</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Potenza di potenza</span><strong>(aᵐ)ⁿ = a^(m×n)</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Prodotto, stessa potenza</span><strong>(a×b)ⁿ = aⁿ × bⁿ</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>📌 Esponente zero</span><strong>a⁰ = 1 (con a≠0)</strong></div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:12px;margin-top:10px;font-family:var(--font);font-weight:700;font-size:14px">
+      <p>✏️ <strong>Esempi:</strong></p>
+      <p>2³ × 2⁴ = 2⁷ = 128 &nbsp;(sommo gli esponenti)</p>
+      <p>5⁶ ÷ 5² = 5⁴ = 625 &nbsp;(sottraggo gli esponenti)</p>
+      <p>(3²)³ = 3⁶ = 729 &nbsp;(moltiplico gli esponenti)</p>
+    </div>
+  </div>
+
+  <div class="vb vb-blue" style="margin-top:14px">
+    <h3>√ Radicali — l'operazione inversa</h3>
+    <div style="font-family:var(--font);font-size:15px;line-height:2.2">
+      <p><strong>√a</strong> (radice quadrata) = il numero che elevato al quadrato dà <em>a</em></p>
+      <p><strong>∛a</strong> (radice cubica) = il numero che elevato al cubo dà <em>a</em></p>
+      <p style="color:var(--primary);font-weight:800">Regola chiave: &nbsp; √a = a^(½) &nbsp;&nbsp;&nbsp; ∛a = a^(⅓)</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0">
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">√25 = 5<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">perché 5²=25</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">√100 = 10<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">perché 10²=100</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">∛8 = 2<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">perché 2³=8</span></div>
+        <div style="background:white;border-radius:12px;padding:10px;text-align:center;font-weight:800">∛64 = 4<br><span style="font-size:12px;font-weight:600;color:var(--text-light)">perché 4³=64</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vb vb-purple" style="margin-top:14px">
+    <h3>🔁 Proprietà dei Radicali</h3>
+    <div style="font-family:var(--font);font-size:14px;line-height:2.4">
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Prodotto sotto radice</span><strong>√(a×b) = √a × √b</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Quoziente sotto radice</span><strong>√(a÷b) = √a ÷ √b</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Semplificazione</span><strong>√(n²×a) = n√a</strong></div>
+      <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0"><span>📌 Quadrato della radice</span><strong>(√a)² = a</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>📌 Radice = potenza frazionaria</span><strong>√a = a^(1/2)</strong></div>
+    </div>
+    <div style="background:white;border-radius:12px;padding:12px;margin-top:10px;font-family:var(--font);font-weight:700;font-size:14px">
+      <p>✏️ <strong>Esempio — Semplifica √72:</strong></p>
+      <p>1. Scomponi in fattori: 72 = 36 × 2</p>
+      <p>2. Porta fuori il quadrato perfetto: √72 = √(36×2) = √36 × √2</p>
+      <p>3. Calcola √36: &nbsp;<strong style="color:var(--primary)">= 6√2</strong></p>
+    </div>
+  </div>
+
+  <div class="vb vb-teal" style="margin-top:14px">
+    <h3>💡 Quadrati perfetti da 1 a 225</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-family:var(--font);font-weight:800;font-size:13px" id="sqPerfRow"></div>
+  </div>
+</div>`,
 };
 
 // ═══════════════════════════════════════════
@@ -1085,6 +1220,7 @@ function showTopic(name) {
     pitagora:'📐 Teorema di Pitagora',
     algebra:'🔤 Algebra',
     statistica:'📊 Statistica',
+    radicali:'√ Potenze & Radicali',
   };
   document.getElementById('topicTitle').textContent = titles[name]||name;
   document.getElementById('lessonContent').innerHTML = LESSONS[name]||'';
@@ -1098,6 +1234,7 @@ function showTopic(name) {
   if(name==='geometria') setTimeout(()=>showGeomShape(document.querySelector('#geomPills .pill'),'rect'),100);
   if(name==='pitagora') setTimeout(drawPita,100);
   if(name==='statistica') setTimeout(initStat,100);
+  if(name==='radicali') setTimeout(initRadicali,100);
 
   renderQuiz(name);
   window.scrollTo(0,0);
@@ -1438,6 +1575,16 @@ function drawPita() {
 }
 
 // Statistics
+function initRadicali() {
+  const row = document.getElementById('sqPerfRow');
+  if(!row) return;
+  const perfects = [1,4,9,16,25,36,49,64,81,100,121,144,169,196,225];
+  row.innerHTML = perfects.map(n => {
+    const r = Math.sqrt(n);
+    return `<span style="background:#ecfeff;color:#0e7490;border-radius:8px;padding:4px 8px;border:1.5px solid #06b6d4">√${n}=${r}</span>`;
+  }).join('');
+}
+
 function initStat() {
   const voti=[6,7,8,6,9,7,6,8];
   const row=document.getElementById('votiRow');
@@ -1501,7 +1648,7 @@ function addPoints(n) {
   document.getElementById('ptsBadge').textContent = `⭐ ${state.points} pt`;
 }
 function updateHome() {
-  const tots = {numeri:10,frazioni:10,geometria:22,pitagora:10,algebra:10,statistica:10};
+  const tots = {numeri:10,frazioni:10,geometria:22,pitagora:10,algebra:10,statistica:10,radicali:15};
   Object.keys(tots).forEach(k=>{
     const p=state.progress[k];
     const fill=document.getElementById('fill-'+k);
@@ -1564,7 +1711,14 @@ function ci(v) {
     return;
   }
   if(v==='±'){cExpr=cExpr?String(-parseFloat(cExpr)):cExpr;d.textContent=cExpr||'0';return;}
-  if(v==='%'){cExpr=cExpr?String(parseFloat(cExpr)/100):cExpr;d.textContent=cExpr||'0';return;}
+  if(v==='√'){
+    const n=parseFloat(cExpr);
+    if(isNaN(n)||n<0){d.textContent='Errore: negativo';cExpr='';return;}
+    const r=Math.sqrt(n);
+    cExpr=String(parseFloat(r.toFixed(8)));
+    d.textContent='√'+n+' = '+r.toFixed(4);
+    cPrevRes=true; return;
+  }
   if(cPrevRes&&'0123456789'.includes(v)){cExpr='';cPrevRes=false;}
   cExpr+=v; d.textContent=cExpr;
 }
@@ -1598,6 +1752,8 @@ function ci(v) {
     {icon:'◇',name:'Rombo',         f:'A = (d₁×d₂) ÷ 2', p:'P = 4l',       inv:'d₁ = 2A÷d₂ | d₂ = 2A÷d₁'},
     {icon:'⭕',name:'Cerchio',       f:'A = π×r²',         p:'C = 2πr',      inv:'r = √(A÷π) | r = C÷(2π)'},
     {icon:'📐',name:'Pitagora',      f:'a²+b²=c²',         p:'—',            inv:'b = √(c²−a²)'},
+    {icon:'√', name:'Potenze',        f:'aᵐ×aⁿ=a^(m+n)',   p:'aᵐ÷aⁿ=a^(m−n)', inv:'(aᵐ)ⁿ=a^(m×n) | a⁰=1'},
+    {icon:'∛', name:'Radicali',       f:'√(a×b)=√a×√b',    p:'√a=a^(1/2)',    inv:'√(n²×a)=n√a'},
   ];
   document.getElementById('formuleList').innerHTML=defs.map(d=>`
     <div class="form-row">
@@ -1613,7 +1769,7 @@ function ci(v) {
 // ═══════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('show');}
+function openModal(id){document.getElementById(id).classList.add('show');if(id==='mTav')setTimeout(renderTavole,80);}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
 // ═══════════════════════════════════════════
@@ -1630,6 +1786,41 @@ function loadProgress() {
   document.getElementById('ptsBadge').textContent=`⭐ ${state.points} pt`;
   updateHome();
 }
+
+// ═══════════════════════════════════════════
+// TAVOLE NUMERICHE
+// ═══════════════════════════════════════════
+function renderTavole() {
+  const from = Math.max(1, parseInt(document.getElementById('tavFrom').value)||1);
+  const to   = Math.min(1000, parseInt(document.getElementById('tavTo').value)||20);
+  if(from >= to) { alert('Il valore "Da" deve essere minore di "A"'); return; }
+  if(to - from > 200) { alert('Max 200 righe alla volta per performance'); return; }
+  const tbody = document.getElementById('tavBody');
+  let rows = '';
+  for(let n = from; n <= to; n++) {
+    const sq  = n * n;
+    const cu  = n * n * n;
+    const sqr = Math.sqrt(n).toFixed(4);
+    const cbr = Math.cbrt(n).toFixed(4);
+    const bg  = n % 2 === 0 ? 'background:#f8fafc' : 'background:white';
+    rows += `<tr style="${bg}">
+      <td style="padding:6px 10px;text-align:right;font-weight:800;color:var(--primary)">${n}</td>
+      <td style="padding:6px 10px;text-align:right;font-weight:700">${sq.toLocaleString('it-IT')}</td>
+      <td style="padding:6px 10px;text-align:right;font-weight:700">${cu.toLocaleString('it-IT')}</td>
+      <td style="padding:6px 10px;text-align:right;font-weight:700;color:#059669">${sqr}</td>
+      <td style="padding:6px 10px;text-align:right;font-weight:700;color:#7c3aed">${cbr}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = rows;
+}
+// Auto-render on modal open — patch openModal
+(function(){
+  const orig = window.openModal || function(){};
+  window.openModal = function(id) {
+    if(typeof orig === 'function') orig(id);
+    if(id === 'mTav') { setTimeout(renderTavole, 80); }
+  };
+})();
 
 // ═══════════════════════════════════════════
 // PWA INSTALL — iOS Safari + Android Chrome
