@@ -530,6 +530,14 @@ body.dsa-font *{letter-spacing:0.08em!important;word-spacing:0.15em!important;li
 </style>
 
 <script>
+// ── Helper decimali italiani ──
+function itNum(n, dec=2) {
+  return parseFloat(n.toFixed(dec)).toString().replace('.', ',');
+}
+function itFixed(n, dec=2) {
+  return n.toFixed(dec).replace('.', ',');
+}
+
 // ── INLINE MANIFEST ──
 (function(){
   const m = {"name": "MathUp \u2013 Matematica DSA", "short_name": "MathUp", "description": "Matematica 2\u00aa Media per studenti con discalculia \u2013 by Valerio Spiga", "start_url": "./", "display": "standalone", "background_color": "#ff6b35", "theme_color": "#ff6b35", "orientation": "portrait", "icons": [{"src": "data:image/png;base64,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", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"}, {"src": "data:image/png;base64,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", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}], "categories": ["education"], "lang": "it"};
@@ -579,6 +587,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
   <button class="tool-chip" onclick="openModal('mForm')">📐 Formule</button>
   <button class="tool-chip" onclick="openModal('mReg')">± Regole Segni</button>
   <button class="tool-chip" onclick="openModal('mTav')">🔢 Tavole Numeriche</button>
+  <button class="tool-chip" onclick="openModal('mPrim')">🔵 Numeri Primi</button>
 </div>
 
 <!-- MAIN -->
@@ -681,7 +690,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
       <p><strong>MathUp</strong> è una webapp educativa pensata per studenti di 2ª media con discalculia e disgrafia, ispirata alle linee guida pedagogiche per i DSA (Legge 170/2010).</p>
       <p>Principi adottati: piccoli passi progressivi, risposta per clic (nessuna scrittura), strumenti compensativi sempre visibili, feedback immediato, rinforzo positivo.</p>
       <p style="margin-top:16px;font-family:var(--font);font-weight:800;color:var(--primary)">Autore: Valerio Spiga</p>
-      <p style="font-size:14px;color:var(--text-light)">Versione 1.0 · 2025</p>
+      <p style="font-size:14px;color:var(--text-light)">Versione 1.0 · 2026</p>
     </div>
     <div class="card">
       <h2>📲 Installazione su telefono</h2>
@@ -753,6 +762,27 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cac
       </table>
     </div>
     <button class="modal-close" onclick="closeModal('mTav')">✓ Chiudi</button>
+  </div>
+</div>
+
+<!-- NUMERI PRIMI MODAL -->
+<div class="overlay" id="mPrim" onclick="if(event.target===this)closeModal('mPrim')">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-handle"></div>
+    <h3>🔵 Numeri Primi &lt; 10 000</h3>
+    <div style="font-family:var(--font);font-size:13px;color:var(--text-light);margin-bottom:10px;font-weight:700">
+      Un numero primo è divisibile <strong>solo per 1 e per se stesso</strong>.
+      Ci sono <strong>1229</strong> numeri primi minori di 10 000.
+    </div>
+    <div style="font-family:var(--font);margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <label style="font-weight:700;font-size:14px">Cerca n°:</label>
+      <input id="primSearch" type="number" min="2" max="9999" placeholder="es. 97"
+        style="width:90px;padding:6px;border-radius:8px;border:2px solid var(--border);font-family:var(--font);font-weight:700;font-size:14px"
+        oninput="checkPrimo(this.value)">
+      <span id="primSearchResult" style="font-family:var(--font);font-weight:800;font-size:14px"></span>
+    </div>
+    <div style="overflow-y:auto;max-height:55vh;border-radius:12px;border:2px solid var(--border);padding:10px;background:white;line-height:2" id="primList"></div>
+    <button class="modal-close" onclick="closeModal('mPrim')">✓ Chiudi</button>
   </div>
 </div>
 
@@ -1542,9 +1572,9 @@ function drawGeom() {
   const res = s.calc(gState.v1, gState.v2);
   const area = typeof res === 'object' ? res.a : res;
   const perim = typeof res === 'object' ? res.p : null;
-  let txt = `Area = ${area.toFixed(2)} cm²`;
-  if(perim) txt += ` &nbsp;|&nbsp; P = ${perim.toFixed(1)} cm`;
-  if(gState.key==='cerchio') txt = `A = ${area.toFixed(2)} cm² &nbsp;|&nbsp; C = ${(2*Math.PI*gState.v1).toFixed(2)} cm`;
+  let txt = `Area = ${area.toFixed(2).replace('.',',')} cm²`;
+  if(perim) txt += ` &nbsp;|&nbsp; P = ${perim.toFixed(1).replace('.',',')} cm`;
+  if(gState.key==='cerchio') txt = `A = ${area.toFixed(2).replace('.',',')} cm² &nbsp;|&nbsp; C = ${(2*Math.PI*gState.v1).toFixed(2).replace('.',',')} cm`;
   document.getElementById('geomResult').innerHTML = txt;
 }
 
@@ -1565,13 +1595,13 @@ function drawPita() {
   ctx.fillStyle='rgba(139,92,246,0.1)'; ctx.fill();
   [[ox,oy,px,py,'#ef4444',`a=${a}`,(ox+px)/2,oy+20],
    [ox,oy,qx,qy,'#3b82f6',`b=${b}`,ox-22,(oy+qy)/2],
-   [px,py,qx,qy,'#8b5cf6',`c≈${c.toFixed(2)}`,(px+qx)/2+18,(py+qy)/2-8]
+   [px,py,qx,qy,'#8b5cf6',`c≈${c.toFixed(2).replace('.',',')}`,(px+qx)/2+18,(py+qy)/2-8]
   ].forEach(([x1,y1,x2,y2,col,lbl,tx,ty])=>{
     ctx.strokeStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
     ctx.fillStyle=col; ctx.font='bold 15px Nunito,sans-serif'; ctx.textAlign='center'; ctx.fillText(lbl,tx,ty);
   });
   const sq=12; ctx.strokeStyle='#888'; ctx.lineWidth=1.5; ctx.strokeRect(ox,oy-sq,sq,sq);
-  document.getElementById('pitaResult').innerHTML = `${a}² + ${b}² = ${a*a} + ${b*b} = <strong>${a*a+b*b}</strong> → c = √${a*a+b*b} ≈ <strong>${c.toFixed(2)}</strong>`;
+  document.getElementById('pitaResult').innerHTML = `${a}² + ${b}² = ${a*a} + ${b*b} = <strong>${a*a+b*b}</strong> → c = √${a*a+b*b} ≈ <strong>${c.toFixed(2).replace('.',',')}</strong>`;
 }
 
 // Statistics
@@ -1590,7 +1620,7 @@ function initStat() {
   const row=document.getElementById('votiRow');
   if(!row) return;
   row.innerHTML=voti.map(v=>`<div style="width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:900;font-size:20px;background:var(--yellow-light);border:3px solid var(--yellow);color:#92400e">${v}</div>`).join('');
-  const media=(voti.reduce((a,b)=>a+b,0)/voti.length).toFixed(2);
+  const media=(voti.reduce((a,b)=>a+b,0)/voti.length).toFixed(2).replace('.',',');
   const sorted=[...voti].sort((a,b)=>a-b);
   const med=(sorted[3]+sorted[4])/2;
   const freq={}; voti.forEach(v=>freq[v]=(freq[v]||0)+1);
@@ -1710,13 +1740,13 @@ function ci(v) {
     }catch(e){d.textContent='Err';cExpr='';}
     return;
   }
-  if(v==='±'){cExpr=cExpr?String(-parseFloat(cExpr)):cExpr;d.textContent=cExpr||'0';return;}
+  if(v==='±'){cExpr=cExpr?String(-parseFloat(cExpr)):cExpr;d.textContent=(cExpr||'0').replace('.',',');return;}
   if(v==='√'){
     const n=parseFloat(cExpr);
     if(isNaN(n)||n<0){d.textContent='Errore: negativo';cExpr='';return;}
     const r=Math.sqrt(n);
     cExpr=String(parseFloat(r.toFixed(8)));
-    d.textContent='√'+n+' = '+r.toFixed(4);
+    d.textContent='√'+n+' = '+r.toFixed(4).replace('.',',');
     cPrevRes=true; return;
   }
   if(cPrevRes&&'0123456789'.includes(v)){cExpr='';cPrevRes=false;}
@@ -1769,7 +1799,7 @@ function ci(v) {
 // ═══════════════════════════════════════════
 // MODAL
 // ═══════════════════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('show');if(id==='mTav')setTimeout(renderTavole,80);}
+function openModal(id){document.getElementById(id).classList.add('show');if(id==='mTav')setTimeout(renderTavole,80);if(id==='mPrim')setTimeout(renderPrimi,80);}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 
 // ═══════════════════════════════════════════
@@ -1788,6 +1818,52 @@ function loadProgress() {
 }
 
 // ═══════════════════════════════════════════
+// NUMERI PRIMI (Crivello di Eratostene)
+// ═══════════════════════════════════════════
+let _primes = null;
+function buildPrimes() {
+  if(_primes) return _primes;
+  const N = 10000;
+  const sieve = new Uint8Array(N+1).fill(1);
+  sieve[0]=sieve[1]=0;
+  for(let i=2;i*i<=N;i++) if(sieve[i]) for(let j=i*i;j<=N;j+=i) sieve[j]=0;
+  _primes=[];
+  for(let i=2;i<=N;i++) if(sieve[i]) _primes.push(i);
+  return _primes;
+}
+function renderPrimi() {
+  const primes = buildPrimes();
+  const container = document.getElementById('primList');
+  if(!container) return;
+  // Render colored spans grouped by hundreds
+  let html2 = '';
+  let curHundred = -1;
+  for(const p of primes) {
+    const h = Math.floor(p/100);
+    if(h !== curHundred) {
+      if(curHundred >= 0) html2 += '</div>';
+      html2 += `<div style="margin-bottom:6px"><span style="font-family:var(--font);font-size:11px;font-weight:800;color:var(--text-light);display:inline-block;width:50px">${h*100}s:</span>`;
+      curHundred = h;
+    }
+    html2 += `<span style="display:inline-block;background:#eff6ff;color:#1d4ed8;border-radius:6px;padding:1px 6px;margin:1px;font-family:var(--font);font-weight:800;font-size:13px">${p}</span>`;
+  }
+  html2 += '</div>';
+  container.innerHTML = html2;
+  document.querySelector('#mPrim h3').textContent = `🔵 Numeri Primi < 10 000 (${primes.length} totali)`;
+}
+function checkPrimo(val) {
+  const n = parseInt(val);
+  const result = document.getElementById('primSearchResult');
+  if(!result) return;
+  if(isNaN(n) || n < 2) { result.textContent=''; return; }
+  const primes = buildPrimes();
+  if(n > 10000) { result.textContent='⚠️ Max 9999'; result.style.color='var(--red)'; return; }
+  const isPrime = primes.includes(n);
+  result.textContent = isPrime ? `✅ ${n} è PRIMO!` : `❌ ${n} non è primo`;
+  result.style.color = isPrime ? 'var(--green)' : 'var(--red)';
+}
+
+// ═══════════════════════════════════════════
 // TAVOLE NUMERICHE
 // ═══════════════════════════════════════════
 function renderTavole() {
@@ -1800,8 +1876,8 @@ function renderTavole() {
   for(let n = from; n <= to; n++) {
     const sq  = n * n;
     const cu  = n * n * n;
-    const sqr = Math.sqrt(n).toFixed(4);
-    const cbr = Math.cbrt(n).toFixed(4);
+    const sqr = Math.sqrt(n).toFixed(4).replace('.',',');
+    const cbr = Math.cbrt(n).toFixed(4).replace('.',',');
     const bg  = n % 2 === 0 ? 'background:#f8fafc' : 'background:white';
     rows += `<tr style="${bg}">
       <td style="padding:6px 10px;text-align:right;font-weight:800;color:var(--primary)">${n}</td>
