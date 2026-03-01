@@ -1,4 +1,4 @@
-# MathUp 🚀 — Matematica 2ª Media per studenti con DSA
+# Mate+ 🚀 — Matematica 2ª Media per studenti con DSA
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](LICENSE)
 [![PWA](https://img.shields.io/badge/PWA-ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
@@ -25,23 +25,27 @@ L'app segue i principi delle linee guida Erickson / MIUR per la didattica DSA:
 
 ## 📚 Argomenti coperti (programma 2ª Media MIUR)
 
-| Argomento | N° esercizi | Formule inverse |
-|-----------|-------------|-----------------|
-| Numeri Relativi | 10 | — |
-| Frazioni | 10 | Reciproco, divisione |
-| Geometria & Aree | 15 | ✅ Trovare base, altezza, lato |
-| Teorema di Pitagora | 10 | ✅ Trovare un cateto |
-| Algebra (intro) | 10 | Equazioni di 1° grado |
-| Statistica | 10 | Media, Moda, Mediana |
+| Argomento | N° esercizi | Sessione | Formule inverse |
+|-----------|-------------|----------|-----------------|
+| Numeri Relativi | 100 | 20 a rotazione | — |
+| Frazioni | 100 | 20 a rotazione | Reciproco, divisione |
+| Geometria & Aree | 100 | 20 a rotazione | ✅ Trovare base, altezza, lato |
+| Teorema di Pitagora | 100 | 20 a rotazione | ✅ Trovare un cateto |
+| Algebra (intro) | 100 | 20 a rotazione | Equazioni di 1° grado |
+| Statistica | 100 | 20 a rotazione | Media, Moda, Mediana |
+| Potenze & Radicali | 100 | 20 a rotazione | ✅ Radice quadrata |
+
+> Ogni sessione propone **20 esercizi scelti casualmente** tra i 100 disponibili per argomento, per un totale di **700 esercizi** nel database.
 
 ---
 
 ## 📲 Installazione su telefono
 
 ### iPhone / iPad (Safari)
-1. Apri `index.html` su GitHub Pages o un server locale
+1. Apri il sito su GitHub Pages
 2. Tocca il pulsante **Condividi** (↑)
 3. Seleziona **"Aggiungi alla schermata Home"**
+4. Apparirà l'icona arancione **Mate+** sulla schermata Home
 
 ### Android (Chrome)
 1. Apri il sito
@@ -57,17 +61,18 @@ L'app segue i principi delle linee guida Erickson / MIUR per la didattica DSA:
 1. Fai fork di questo repository
 2. Vai in **Settings → Pages**
 3. Source: **Deploy from branch** → `main` → `/ (root)`
-4. L'app sarà disponibile su: `https://[tuousername].github.io/mathup/`
+4. L'app sarà disponibile su: `https://[tuousername].github.io/mateplus/`
 
 ---
 
 ## 🗂 Struttura del progetto
 
 ```
-mathup/
+mateplus/
 ├── index.html          # App principale (single-file PWA)
 ├── manifest.json       # Manifest PWA
 ├── sw.js               # Service Worker (cache offline)
+├── favicon.ico         # Favicon 16/32/48px
 ├── icons/
 │   ├── icon-72.png
 │   ├── icon-96.png
@@ -84,11 +89,14 @@ mathup/
 
 ## ⚙️ Funzionalità tecniche
 
-- **PWA completa**: installabile su home screen, offline support
+- **PWA completa**: installabile su home screen, offline support via `sw.js`
 - **No framework**: HTML5 + CSS3 + Vanilla JS puro (nessuna dipendenza)
+- **700 esercizi**: 100 per argomento, randomizzati con algoritmo Fisher-Yates
+- **Sessioni da 20**: ogni sessione pesca 20 esercizi casuali dal database, con nuova selezione ad ogni riavvio
+- **Ripasso Generale**: modalità che mescola tutte le categorie, con storico del miglior risultato
 - **Canvas interattivi**: visualizzazioni di triangoli e figure geometriche
-- **Calcolatrice integrata**: sempre accessibile come strumento compensativo
-- **Progresso salvato**: usa localStorage per ricordare i punti tra sessioni
+- **Calcolatrice integrata**: con pallottoliere visivo per numeri 1–20, memoria del risultato precedente
+- **Progresso salvato**: usa `localStorage` per ricordare i punti tra sessioni
 - **Font ottimizzato**: Nunito (arrotondato, leggibile per DSA)
 - **Safe area insets**: compatibile con i notch degli iPhone
 
