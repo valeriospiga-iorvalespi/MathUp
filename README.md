@@ -4,7 +4,7 @@
 [![PWA](https://img.shields.io/badge/PWA-ready-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps)
 
 > **Autore:** Valerio Spiga  
-> **Versione:** 1.0 — 2025
+> **Versione:** 1.0 — 2026
 
 Una **Progressive Web App (PWA)** pensata per studenti di **2ª Media** con **discalculia e disgrafia**, basata sulle indicazioni pedagogiche per i Disturbi Specifici dell'Apprendimento (DSA) — Legge 170/2010.
 
